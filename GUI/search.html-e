@@ -1,0 +1,22 @@
+<!DOCTYPE>
+<html>
+    <header>
+        <title>Laker Books</title>
+        <link href="search.css" rel="stylesheet" type="text/css" media="screen"/>
+    </header>
+    <body>
+        <div id="content">
+            <div id="logo"></div>
+            <div class="flexsearch">
+		<div class="flexsearch--wrapper">
+			<form class="flexsearch--form" action='results.html' method="post">
+				<div class="flexsearch--input-wrapper">
+					<input class="flexsearch--input" type="search" placeholder="Enter Textbook Title or ISBN" style="color:#FFFFFF">
+				</div>
+				<input class="flexsearch--submit" type="submit" value="&#10140;"/>
+			</form>
+		      </div>
+            </div>
+        </div>
+    </body>
+</html>
