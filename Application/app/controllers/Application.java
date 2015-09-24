@@ -6,6 +6,7 @@ import play.data.Form;
 import play.api.db.*;
 
 import java.sql.*;
+import java.util.*;
 
 import views.html.*;
 
@@ -21,6 +22,7 @@ public class Application extends Controller {
     	Connection conn = null;
         Statement stmt = null;
     	String input = null;
+    	ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
     	input = Form.form().bindFromRequest().get("input");
 
@@ -31,18 +33,15 @@ public class Application extends Controller {
             
             stmt = conn.createStatement();
             
-            String sqlStr = "select * from item where isbn =" + "'" + input + "'" + ";"; 
-            System.out.println(sqlStr);
+            String sqlStr = "select * from item where title =" + "'" + input + "'" + ";"; //looks inside database to see if anything matches search bar input
             ResultSet resp = stmt.executeQuery(sqlStr);
-            while(resp.next()!=false)
-            	System.out.println(resp.getString("title"));
-
-
+            while(resp.next()!=false){
+            	bookresults.add(new bookObject(resp.getLong("isbn"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("state"), resp.getInt("price"), resp.getString("seller_email"), resp.getString("buyer_email")));
+        	}
         }catch (SQLException k) {
             k.printStackTrace(); //redirect(routes.Application.errorf());
         }
-
-        return ok(results.render());
+        return ok(views.html.results.render(bookresults));
     }
 
 }
