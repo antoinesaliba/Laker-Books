@@ -1,7 +1,43 @@
-@(message: String)
-
-@main("Welcome to Play") {
-
-    @play20.welcome(message, style = "Java")
-
-}
+<!DOCTYPE>
+<html>
+    <header>
+        <title>Laker Books</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/index.css">
+        <script type="text/javascript" src="/public/javascripts/jquery-2.1.4.js"></script>
+        <script type="text/javascript">
+            jQuery('body').css('display','none');
+            jQuery(document).ready(function() {
+		    jQuery('body').fadeIn();
+		      jQuery('button').on('click',function(event){
+			     var thetarget = this.getAttribute('target')
+			     if (thetarget != "_blank"){			
+				    event.preventDefault();
+				    jQuery('#content').fadeOut(500);
+                    jQuery('#search').fadeIn(2000);
+			     }
+		      });
+	       });
+        </script>
+    </header>
+    <body>
+        <div id="content">
+            <div id="logo"></div>
+            <div class="buttons">
+                <p><button class="btn btn-4 btn-4a" onClick="#">Buy Textbook</button>
+                </p>
+                <p><button class="btn btn-4 btn-4a" onClick="#">Sell Textbook</button></p>
+            </div>
+        </div>
+        <div id="search" style="display:none;">
+            <div id="logo"></div>
+            <div class="flexsearch">
+			         <form class="flexsearch--form" action='@routes.Application.showResults()' method="GET">
+				        <div class="flexsearch--input-wrapper">
+					       <input class="flexsearch--input" name="input" type="search" placeholder="Enter Textbook Title or ISBN" style="color:#FFFFFF">
+				        <input class="flexsearch--submit" type="submit" value="&#10140;"/>
+                        </div>
+			         </form>
+            </div>
+        </div>
+    </body>
+</html>
