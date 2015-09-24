@@ -8,11 +8,11 @@ body {
 }
 #results {
     background: #FFFFFF;
-    position: absolute;
     height: 50%; 
     width: 70%;
     top: 15%;
     left: 15%;
     margin: auto;
+    margin-bottom: 10%;
     border-radius: 75px;
 }
