@@ -4,6 +4,7 @@
     <header>
         <title>Laker Books</title>
                 <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/sell.css">
+    </header>
     <body>
         <div id="content">
             <div id="logo"></div>
@@ -14,33 +15,36 @@
                         <div class="info">
                             <form class="bookdetails" action='@routes.Application.sellItem()' method="GET">
                                 @if(newbook.title==null){
-                                    <input name="input" placeholder="Title"></input>
+                                    <input name="input" class="textf" placeholder="Title"></input>
                                 }else{
                                     <p class="entered" style="font-size:4vmin;"><b>@newbook.title</b></p>
                                 }
                                 @if(newbook.authors==null){
-                                    <input name="input" placeholder="Authors"></input>
+                                    <input name="input" class="textf" placeholder="Authors"></input>
                                 }else{
-                                    <p class="entered">Authors: @newbook.authors</p>
+                                    <p  class="entered">Authors: @newbook.authors</p>
                                 }
                                 @if(newbook.edition==null){
-                                    <input name="input" placeholder="Edition"></input>
+                                    <input name="input" class="textf" placeholder="Edition"></input>
                                 }else{
-                                    <input name="input" style="border: none;" value="Edition: @newbook.edition"></input>
+                                    <input name="input" class="entered" style="border: none;" value="Edition: @newbook.edition"></input>
                                 }
                                 @if(newbook.isbn13==null){
-                                    <input name="input" placeholder="ISBN-13"></input>
+                                    <input name="input" class="textf" placeholder="ISBN-13"></input>
                                 }else{
-                                    <input name="input" style="border: none;" value="ISBN-13: @newbook.isbn13"></input>
+                                    <p class="entered">ISBN-13: @newbook.isbn13</p>
                                 }
-                                @if(newbook.title==null){
-                                    <input name="input" placeholder="ISBN-10"></input>
+                                @if(newbook.isbn10==null){
+                                    <input name="input" class="textf" placeholder="ISBN-10"></input>
                                 }else{
-                                    <input name="input" style="border: none;" value="ISBN-10: @newbook.isbn10"></input>
+                                    <p class="entered">ISBN-10: @newbook.isbn10</p>
                                 }
-                                <input name="input" placeholder="Condition"></input>
-                                <input name="input" placeholder="Price"></input>
-                                <input name="input" placeholder="Seller Oswego Email"></input>
+                                <br>
+                                <input name="condition" type=radio value=new>New      
+                                <input style="margin-left:4%;" name="condition" type=radio value=used>Used
+                                <input style="margin-bottom: 3%; margin-left: 4%;" name="condition" type=radio value=torn>Torn Apart
+                                <input name="input" class="textf" placeholder="Price"></input>
+                                <input name="input" class="textf" placeholder="Seller Oswego Email"></input>
                                 <input id="postbutton" type="submit" value="Post Item"/>
                             </form>
                         </div>

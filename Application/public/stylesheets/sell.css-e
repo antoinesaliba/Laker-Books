@@ -29,19 +29,20 @@ body {
     width: auto;
     margin-top: 4%;
 }
-.info input{
-    height: 8%;
+.textf{
+    height: 6.5%;
     width: 95%;
-    margin-bottom: 1%;
+    margin-bottom: 20px;
     font-size: 2.5vmin;
 }
 
 .entered{
     width: 95%;
     word-break: normal;
-    font-size: 3.0vmin;
-
+    font-size: 2.7vmin;
+    margin-bottom: 10px;
 }
+
 #postbutton{
     float:right;
     margin-right: 15%;
