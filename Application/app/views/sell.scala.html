@@ -9,24 +9,34 @@
             <div id="logo"></div>
                     <div id="results">
                         <div class="picture">
-                            <p>Picture</p>
+                            <img src="@newbook.imageURL" />
                         </div>
                         <div class="info">
                             <form class="bookdetails" action='@routes.Application.sellItem()' method="GET">
                                 @if(newbook.title==null){
                                     <input name="input" placeholder="Title"></input>
                                 }else{
-                                    <input name="input" style="border: none;" value="@newbook.title"></input>
+                                    <p class="entered" style="font-size:4vmin;"><b>@newbook.title</b></p>
                                 }
                                 @if(newbook.authors==null){
                                     <input name="input" placeholder="Authors"></input>
                                 }else{
-                                    <input name="input" style="border: none;" value="@newbook.authors"></input>
+                                    <p class="entered">Authors: @newbook.authors</p>
                                 }
                                 @if(newbook.edition==null){
                                     <input name="input" placeholder="Edition"></input>
                                 }else{
-                                    <input name="input" style="border: none;" value="@newbook.edition"></input>
+                                    <input name="input" style="border: none;" value="Edition: @newbook.edition"></input>
+                                }
+                                @if(newbook.isbn13==null){
+                                    <input name="input" placeholder="ISBN-13"></input>
+                                }else{
+                                    <input name="input" style="border: none;" value="ISBN-13: @newbook.isbn13"></input>
+                                }
+                                @if(newbook.title==null){
+                                    <input name="input" placeholder="ISBN-10"></input>
+                                }else{
+                                    <input name="input" style="border: none;" value="ISBN-10: @newbook.isbn10"></input>
                                 }
                                 <input name="input" placeholder="Condition"></input>
                                 <input name="input" placeholder="Price"></input>

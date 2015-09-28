@@ -45,7 +45,7 @@ public class Application extends Controller {
             String sqlStr = "select * from item where title =" + "'" + input + "'" + ";"; //looks inside database to see if anything matches search bar input
             ResultSet resp = stmt.executeQuery(sqlStr);
             while(resp.next()!=false){
-            	bookresults.add(new bookObject(resp.getLong("isbn"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("state"), resp.getInt("price"), resp.getString("seller_email"), resp.getString("buyer_email")));
+            	bookresults.add(new bookObject(resp.getString("isbn13"), resp.getString("isbn10"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("state"), resp.getInt("price"), resp.getString("seller_email"), resp.getString("buyer_email"), resp.getString("img_url")));
         	}
         }catch (SQLException k) {
             k.printStackTrace(); //redirect(routes.Application.errorf());
@@ -82,22 +82,24 @@ public class Application extends Controller {
                 Node nNode = nList.item(0);
 
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                	long isbn10=0;
-                	long isbn13=0;
+                	String isbn10=null;
+                	String isbn13=null;
                 	String title=null;
                 	String authors=null;
                 	String edition=null;
+                	String img=null;
 
                     Element eElement = (Element) nNode;
 
-                    isbn10 = Long.parseLong(eElement.getElementsByTagName("isbn").item(0).getTextContent().trim());
-                    isbn13 = Long.parseLong(eElement.getElementsByTagName("ean").item(0).getTextContent().trim());
+                    isbn10 = eElement.getElementsByTagName("isbn").item(0).getTextContent().trim();
+                    isbn13 = eElement.getElementsByTagName("ean").item(0).getTextContent().trim();
 					title = eElement.getElementsByTagName("title").item(0).getTextContent().trim();
-					//authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
+					authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
 					edition = eElement.getElementsByTagName("edition").item(0).getTextContent().trim();
 
+					authors = authors.replaceAll(";"," & ");
 
-                    bookObject newbook = new bookObject(isbn13,title,null,edition,null,0,null,null);
+                    bookObject newbook = new bookObject(isbn13,isbn10,title,authors,edition,null,0,null,null,img);
                     return ok(views.html.sell.render(newbook));
                 }
             }
