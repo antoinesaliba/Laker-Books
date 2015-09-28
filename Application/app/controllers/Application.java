@@ -96,8 +96,10 @@ public class Application extends Controller {
 					title = eElement.getElementsByTagName("title").item(0).getTextContent().trim();
 					authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
 					edition = eElement.getElementsByTagName("edition").item(0).getTextContent().trim();
+					if (edition.equals("0")) //if edition is 0, make it display N/A instead
+						edition="N/A";
 
-					authors = authors.replaceAll(";"," & ");
+					authors = authors.replaceAll(";"," & "); //make the output of the authors more readable
 
                     bookObject newbook = new bookObject(isbn13,isbn10,title,authors,edition,null,0,null,null,img);
                     return ok(views.html.sell.render(newbook));
