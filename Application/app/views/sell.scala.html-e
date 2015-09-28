@@ -1,0 +1,40 @@
+@(newbook: bookObject)
+
+<html>
+    <header>
+        <title>Laker Books</title>
+                <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/sell.css">
+    <body>
+        <div id="content">
+            <div id="logo"></div>
+                    <div id="results">
+                        <div class="picture">
+                            <p>Picture</p>
+                        </div>
+                        <div class="info">
+                            <form class="bookdetails" action='@routes.Application.sellItem()' method="GET">
+                                @if(newbook.title==null){
+                                    <input name="input" placeholder="Title"></input>
+                                }else{
+                                    <input name="input" style="border: none;" value="@newbook.title"></input>
+                                }
+                                @if(newbook.authors==null){
+                                    <input name="input" placeholder="Authors"></input>
+                                }else{
+                                    <input name="input" style="border: none;" value="@newbook.authors"></input>
+                                }
+                                @if(newbook.edition==null){
+                                    <input name="input" placeholder="Edition"></input>
+                                }else{
+                                    <input name="input" style="border: none;" value="@newbook.edition"></input>
+                                }
+                                <input name="input" placeholder="Condition"></input>
+                                <input name="input" placeholder="Price"></input>
+                                <input name="input" placeholder="Seller Oswego Email"></input>
+                                <input id="postbutton" type="submit" value="Post Item"/>
+                            </form>
+                        </div>
+                </div>
+        </div>
+    </body>
+</html>
