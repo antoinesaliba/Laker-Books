@@ -13,7 +13,7 @@
                             <img src="@newbook.imageURL" />
                         </div>
                         <div class="info">
-                            <form class="bookdetails" action='@routes.Application.sellItem()' method="GET">
+                            <form class="bookdetails" action='@routes.Application.postItem()' method="GET">
                                 @if(newbook.title==null){
                                     <input name="input" class="textf" placeholder="Title"></input>
                                 }else{
@@ -27,7 +27,7 @@
                                 @if(newbook.edition==null){
                                     <input name="input" class="textf" placeholder="Edition"></input>
                                 }else{
-                                    <input name="input" class="entered" style="border: none;" value="Edition: @newbook.edition"></input>
+                                    <p  class="entered">Edition: @newbook.edition</p>
                                 }
                                 @if(newbook.isbn13==null){
                                     <input name="input" class="textf" placeholder="ISBN-13"></input>
@@ -40,11 +40,11 @@
                                     <p class="entered">ISBN-10: @newbook.isbn10</p>
                                 }
                                 <br>
-                                <input name="condition" type=radio value=new>New      
-                                <input style="margin-left:4%;" name="condition" type=radio value=used>Used
-                                <input style="margin-bottom: 3%; margin-left: 4%;" name="condition" type=radio value=torn>Torn Apart
-                                <input name="input" class="textf" placeholder="Price"></input>
-                                <input name="input" class="textf" placeholder="Seller Oswego Email"></input>
+                                <input name=condition type=radio value=new>New      
+                                <input style="margin-left:4%;" name=condition type=radio value=used>Used
+                                <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
+                                <input name=price class="textf" placeholder="Price"></input>
+                                <input name=email class="textf" placeholder="Seller Oswego Email"></input>
                                 <input id="postbutton" type="submit" value="Post Item"/>
                             </form>
                         </div>

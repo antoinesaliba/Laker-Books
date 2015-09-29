@@ -2,6 +2,7 @@ package controllers;
 
 public class bookObject{
 
+    public long id;
     public String isbn13;
     public String isbn10;
     public String title;
@@ -14,12 +15,13 @@ public class bookObject{
     public String imageURL;
 
 
-    public bookObject(String isbn13, String isbn10, String title, String authors, String edition, String state, int price, String seller, String buyer, String imageURL){
-        this.isbn13=isbn13;
-        this.isbn10=isbn10;
+    public bookObject(long id, String title, String authors, String edition, String isbn13, String isbn10, String state, int price, String seller, String buyer, String imageURL){
+        this.id=id;
         this.title=title;
         this.authors=authors;
         this.edition=edition;
+        this.isbn13=isbn13;
+        this.isbn10=isbn10;
         this.state=state;
         this.price=price;
         this.seller=seller;
