@@ -11,6 +11,9 @@ GET     /results                    controllers.Application.showResults()
 # Sell book
 GET     /sell                    controllers.Application.sellItem()
 
+# Sell book
+GET     /retry                    controllers.Application.reputInfo()
+
 # Post book on website
 GET     /post                  controllers.Application.postItem()
 
