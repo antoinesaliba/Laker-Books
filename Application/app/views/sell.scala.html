@@ -1,4 +1,4 @@
-@(newbook: bookObject)
+@(newbook: bookObject, condition: Boolean, price: Boolean, email: Boolean)
 
 <html>
     <header>
@@ -40,11 +40,44 @@
                                     <p class="entered">ISBN-10: @newbook.isbn10</p>
                                 }
                                 <br>
-                                <input name=condition type=radio value=new>New      
-                                <input style="margin-left:4%;" name=condition type=radio value=used>Used
-                                <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
-                                <input name=price class="textf" placeholder="Price"></input>
-                                <input name=email class="textf" placeholder="Seller Oswego Email"></input>
+                                @if(condition){
+                                    <input name=condition type=radio value=new style="outline: 1px solid red;">New      
+                                    <input style="margin-left:4%; outline: 1px solid red;" name=condition type=radio value=used>Used
+                                    <input style="margin-bottom: 3%; margin-left: 4%; outline: 1px solid red;" name=condition type=radio value=torn>Torn Apart
+                                }else{ @if(newbook.state==null){
+                                    <input name=condition type=radio value=new>New      
+                                    <input style="margin-left:4%;" name=condition type=radio value=used>Used
+                                    <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
+                                    }else{ @if(newbook.state.equals("new")){
+                                            <input name=condition type=radio value=new checked="checked">New      
+                                            <input style="margin-left:4%;" name=condition type=radio value=used>Used
+                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
+                                        }else{ @if(newbook.state.equals("used")){
+                                            <input name=condition type=radio value=new>New      
+                                            <input style="margin-left:4%;" name=condition type=radio value=used checked="true">Used
+                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
+                                        }else{ @if(newbook.state.equals("torn")){
+                                            <input name=condition type=radio value=new>New      
+                                            <input style="margin-left:4%;" name=condition type=radio value=used>Used
+                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn checked="checked">Torn Apart
+                                }}}}}
+
+                                @if(price){
+                                    <input style="border: solid; border-color: red;" name=price class="textf" placeholder="Price"></input>
+                                }else{ @if(newbook.price==0){
+                                    <input name=price class="textf" placeholder="Price"></input>
+                                    }else{
+                                        <input name=price class="textf" value="@newbook.price"></input>
+                                }}
+
+                                @if(email){
+                                    <input style="border: solid; border-color: red;" name=price class="textf" placeholder="Oswego Email Address"></input>
+                                }else{ @if(newbook.seller==""){
+                                    <input name=email class="textf" placeholder="Oswego Email Address"></input>
+                                    }else{
+                                        <input name=email class="textf" value="@newbook.seller"></input>
+                                }}
+
                                 <input id="postbutton" type="submit" value="Post Item"/>
                             </form>
                         </div>

@@ -63,65 +63,66 @@ public class Application extends Controller {
     	String temp = input.replaceAll("-", ""); //Removes dashes from input and checks to see if ISBN, if not string input is still intact
 
     	try{
-    	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    	
-    	if (temp.matches("[0-9]+")) { //checks to see if user entered ISBN or Title
-    		if(temp.length() == 10)
-    			apiRequest="http://www.directtextbook.com/xml_buyback.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&isbn="+temp;
-    		else if(temp.length() == 13)
-    			apiRequest="http://www.directtextbook.com/xml_buyback.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&ean="+temp;
-    		Document doc = dBuilder.parse(new URL(apiRequest).openStream());
-    		doc.getDocumentElement().normalize();
-    		NodeList nList = doc.getElementsByTagName("book");
+	    	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+	    	
+	    	if (temp.matches("[0-9]+")) { //checks to see if user entered ISBN or Title
+	    		if(temp.length() == 10)
+	    			apiRequest="http://www.directtextbook.com/xml_buyback.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&isbn="+temp;
+	    		else if(temp.length() == 13)
+	    			apiRequest="http://www.directtextbook.com/xml_buyback.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&ean="+temp;
+	    		Document doc = dBuilder.parse(new URL(apiRequest).openStream());
+	    		doc.getDocumentElement().normalize();
+	    		NodeList nList = doc.getElementsByTagName("book");
 
-    		if (nList.getLength() == 0) {
-                return ok(index.render());
-            } else {
+	    		if (nList.getLength() == 0) {
+	                return ok(index.render());
+	            } else {
 
-                Node nNode = nList.item(0);
+	                Node nNode = nList.item(0);
 
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                	String isbn10=null;
-                	String isbn13=null;
-                	String title=null;
-                	String authors=null;
-                	String edition=null;
-                	String image=null;
+	                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+	                	String isbn10=null;
+	                	String isbn13=null;
+	                	String title=null;
+	                	String authors=null;
+	                	String edition=null;
+	                	String image=null;
 
-                    Element eElement = (Element) nNode;
+	                    Element eElement = (Element) nNode;
 
-					title = eElement.getElementsByTagName("title").item(0).getTextContent().trim();
-					
-					authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
-					authors = authors.replaceAll(";"," & "); //make the output of the authors more readable
-					
-					edition = eElement.getElementsByTagName("edition").item(0).getTextContent().trim();
-					if (edition.equals("0")) //if edition is 0, make it display N/A instead
-						edition="N/A";
-					
-					isbn10 = eElement.getElementsByTagName("isbn").item(0).getTextContent().trim();
-                    isbn13 = eElement.getElementsByTagName("ean").item(0).getTextContent().trim();
+						title = eElement.getElementsByTagName("title").item(0).getTextContent().trim();
+						
+						authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
+						authors = authors.replaceAll(";"," & "); //make the output of the authors more readable
+						
+						edition = eElement.getElementsByTagName("edition").item(0).getTextContent().trim();
+						if (edition.equals("0")) //if edition is 0, make it display N/A instead
+							edition="N/A";
+						
+						isbn10 = eElement.getElementsByTagName("isbn").item(0).getTextContent().trim();
+	                    isbn13 = eElement.getElementsByTagName("ean").item(0).getTextContent().trim();
 
-                    image = "http://www.directtextbook.com/large/"+isbn10+".jpg";
+	                    image = "http://www.directtextbook.com/large/"+isbn10+".jpg";
 
-                    bookObject newbook = new bookObject(0,title,authors,edition,isbn13,isbn10,null,0,null,null,image);
-                    
-                	session("title", title);
-                	session("authors", authors);
-                	session("edition", edition);
-                	session("isbn13", isbn13);
-                	session("isbn10", isbn10);
-                	session("image", image);
-                    
-                    return ok(views.html.sell.render(newbook));
-                }
-            }
+	                    bookObject newbook = new bookObject(0,title,authors,edition,isbn13,isbn10,null,0,null,null,image);
+	                    
+	                	session("title", title);
+	                	session("authors", authors);
+	                	session("edition", edition);
+	                	session("isbn13", isbn13);
+	                	session("isbn10", isbn10);
+	                	session("image", image);
+	                    
+	                    return ok(views.html.sell.render(newbook,false,false,false));
+	                }
+	            }
 
 
-    	}else{
-    		apiRequest="http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&query="+input;
-    	}
+	    	}else{
+	    		//apiRequest="http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&query="+input;
+	    		return ok(views.html.edition.render());
+	    	}
     } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }catch (MalformedURLException f) {
@@ -133,6 +134,12 @@ public class Application extends Controller {
         }
         return ok(index.render());
     }
+
+    public Result gaveTitle(){
+    	String edition = Form.form().bindFromRequest().get("edition");
+    	System.out.println(edition);
+    	return ok(index.render());
+    }
     public Result reputInfo(){
     	String title = session("title");  //retrieve information from session that was found by API
     	String authors = session("authors");
@@ -143,7 +150,7 @@ public class Application extends Controller {
 
     	bookObject newbook = new bookObject(0,title,authors,edition,isbn13,isbn10,null,0,null,null,image);
 
-    	return ok(views.html.sell.render(newbook));
+    	return ok(views.html.sell.render(newbook,false,false,false));
 
     }
     public Result postItem(){
@@ -151,14 +158,20 @@ public class Application extends Controller {
         Statement stmt = null;
         long millis = System.currentTimeMillis();
 
-    	String title = session("title");  //retrieve information from session that was found by API
+        //checks to make sure all fields have been entered
+        boolean conditionError=false;
+        boolean priceError=false;
+        boolean emailError=false;
+
+        //retrieve information from session that was found by API
+    	String title = session("title");  
     	String authors = session("authors");
     	String edition = session("edition");
     	String isbn13 = session("isbn13");
     	String isbn10 = session("isbn10");
     	String image = session("image");
+
     	int price = 0;
-    	ArrayList<String> errors = new ArrayList<String>();
 
     	String condition = Form.form().bindFromRequest().get("condition");
     	if(!Form.form().bindFromRequest().get("price").equals(""))
@@ -166,15 +179,16 @@ public class Application extends Controller {
     	String seller_email = Form.form().bindFromRequest().get("email");
 
     	if(condition==null){
-    		errors.add("Error: No condition entered.");
+    		conditionError=true;
     	}
     	if(price==0)
-    		errors.add("Error: No price entered.");
-    	if(seller_email=="")
-    		errors.add("Error: No Oswego email entered. This is needed to make sure you are a SUNY Oswego student and you will be emailed once someone is interested in your textbook.");
+    		priceError=true;
+    	if(seller_email==""||seller_email==null)
+    		emailError=true;
 
-    	if(errors.size()>0){
-    		return ok(views.html.error.render(errors));
+    	if(conditionError||priceError||emailError){
+    		bookObject newbook = new bookObject(0,title,authors,edition,isbn13,isbn10,condition,price,seller_email,null,image);
+    		return ok(views.html.sell.render(newbook, conditionError, priceError, emailError));
     	}else{
 
 	    	try{
