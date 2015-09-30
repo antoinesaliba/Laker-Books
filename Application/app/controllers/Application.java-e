@@ -31,6 +31,7 @@ public class Application extends Controller {
     	Connection conn = null;
         Statement stmt = null;
     	String input = null;
+    	String sqlStr = null;
     	ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
     	input = Form.form().bindFromRequest().get("input");
@@ -41,13 +42,51 @@ public class Application extends Controller {
                        "jdbc:mysql://localhost:3306/lakerbooks", "root", "262863436232"); // Opens connection with mysql database
             
             stmt = conn.createStatement();
-            
-            String sqlStr = "select * from books where title =" + "'" + input + "'" + ";"; //looks inside database to see if anything matches search bar input
+
+            String temp = input.replaceAll("-", ""); //Removes dashes from input and checks to see if ISBN, if not string input is still intact
+	    	
+	    	//check to see if user entered ISBN or Title
+	    	if (temp.matches("[0-9]+")) {
+	    		if(temp.length() == 10)
+	    			sqlStr="select * from books where isbn10 =" + "'" + temp + "'" + ";";
+	    		else if(temp.length() == 13)
+	    			sqlStr="select * from books where isbn13 =" + "'" + temp + "'" + ";";
+            }else{
+            	session("title", input);
+            	return ok(views.html.editionbuy.render());
+            }	
+
             ResultSet resp = stmt.executeQuery(sqlStr);
             while(resp.next()!=false){
-            	bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller_email"), resp.getString("buyer_email"), resp.getString("img_url")));
+            	bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller_email"), resp.getString("buyer_email"), resp.getString("image_url")));
         	}
         }catch (SQLException k) {
+            k.printStackTrace(); //redirect(routes.Application.errorf());
+        }
+        return ok(views.html.results.render(bookresults));
+    }
+
+    public Result buyTitle(){
+    	Connection conn = null;
+        Statement stmt = null;
+    	String title = session("title");
+    	String edition = Form.form().bindFromRequest().get("edition");
+		ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
+
+    	String sqlStr = "select * from books where title =" + "'" + title + "' and edition =" + "'" + edition + "';";
+    	System.out.println(sqlStr);
+
+    	try{
+    		conn = DriverManager.getConnection(
+                       "jdbc:mysql://localhost:3306/lakerbooks", "root", "262863436232"); // Opens connection with mysql database
+            
+            stmt = conn.createStatement();
+            
+    		ResultSet resp = stmt.executeQuery(sqlStr);
+            while(resp.next()!=false){
+            	bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller_email"), resp.getString("buyer_email"), resp.getString("image_url")));
+        	}
+    	}catch (SQLException k) {
             k.printStackTrace(); //redirect(routes.Application.errorf());
         }
         return ok(views.html.results.render(bookresults));
@@ -135,23 +174,9 @@ public class Application extends Controller {
         return ok(index.render());
     }
 
-    public Result gaveTitle(){
+    public Result sellTitle(){
     	String edition = Form.form().bindFromRequest().get("edition");
-    	System.out.println(edition);
     	return ok(index.render());
-    }
-    public Result reputInfo(){
-    	String title = session("title");  //retrieve information from session that was found by API
-    	String authors = session("authors");
-    	String edition = session("edition");
-    	String isbn13 = session("isbn13");
-    	String isbn10 = session("isbn10");
-    	String image = session("image");
-
-    	bookObject newbook = new bookObject(0,title,authors,edition,isbn13,isbn10,null,0,null,null,image);
-
-    	return ok(views.html.sell.render(newbook,false,false,false));
-
     }
     public Result postItem(){
     	Connection conn = null;
@@ -208,7 +233,7 @@ public class Application extends Controller {
 	            }
 
 		            
-		        String command = "insert into books (id, title, authors, edition, isbn13, isbn10, state, price, seller_email,buyer_email) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		        String command = "insert into books (id, title, authors, edition, isbn13, isbn10, state, price, seller_email,buyer_email, image_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);";
 		        PreparedStatement comm = conn.prepareStatement(command);
 		        comm.setLong(1, millis);
 		        comm.setString(2, title);
@@ -219,7 +244,8 @@ public class Application extends Controller {
 		        comm.setString(7, condition);
 		        comm.setInt(8, price);
 		        comm.setString(9, seller_email);
-		        comm.setString(10, image);
+		        comm.setString(10, null);
+		        comm.setString(11, image);
 		        comm.execute();
 		    }catch (SQLException k) {
 	            k.printStackTrace(); 

@@ -1,23 +1,67 @@
 body {
     background-color: #fc6c64;
+    height: auto;
 }
 #content {
     position: relative;
     width: 100%;
-    height: 100%;
-    margin-top: 15%;
+    height: auto;
+    margin-top: 10%;
 }
 #results {
     background: #FFFFFF;
-    height: 50%; 
-    width: 70%;
+    height: 75%; 
+    width: 85%;
     left: 15%;
     margin: auto;
     margin-bottom: 5%;
     border-radius: 75px;
-    text-align: right;
 }
 .info{
-    width: 50%;
-    margin: 0;
+    width: 67%;
+    height: 100%;
+    float: right;
+    border-radius: 75px;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+}
+.bookdetails{
+    height: inherit;
+    width: auto;
+    margin-top: 4%;
+}
+.textf{
+    height: 6.5%;
+    width: 95%;
+    margin-bottom: 20px;
+    font-size: 2.5vmin;
+}
+.entered{
+    width: 90%;
+    word-break: normal;
+    font-size: 2.7vmin;
+    margin-bottom: 10px;
+}
+#postbutton{
+    float:right;
+    margin-right: 15%;
+    margin-top: 1%;
+    width: 30%; 
+    color: black;
+    line-height: 30px;
+    height: 10%;
+    border-radius: 75px;
+    font-size: 3vmin;
+}
+.picture{
+    width: 33%;
+    height: 100%;
+    float: left;
+}
+.picture img{
+    height: 70%;
+    width:80%;
+    margin-top: 45px;
+    margin-left: 6%;
+    margin-right: 5%;
 }

@@ -49,17 +49,17 @@
                                     <input style="margin-left:4%;" name=condition type=radio value=used>Used
                                     <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
                                     }else{ @if(newbook.state.equals("new")){
-                                            <input name=condition type=radio value=new checked="checked">New      
-                                            <input style="margin-left:4%;" name=condition type=radio value=used>Used
-                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
+                                            <input name=condition type=radio value=New checked="checked">New      
+                                            <input style="margin-left:4%;" name=condition type=radio value=Used>Used
+                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=Torn>Torn Apart
                                         }else{ @if(newbook.state.equals("used")){
-                                            <input name=condition type=radio value=new>New      
-                                            <input style="margin-left:4%;" name=condition type=radio value=used checked="true">Used
-                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
+                                            <input name=condition type=radio value=New>New      
+                                            <input style="margin-left:4%;" name=condition type=radio value=Used checked="true">Used
+                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=Torn Apart >Torn Apart
                                         }else{ @if(newbook.state.equals("torn")){
-                                            <input name=condition type=radio value=new>New      
-                                            <input style="margin-left:4%;" name=condition type=radio value=used>Used
-                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn checked="checked">Torn Apart
+                                            <input name=condition type=radio value=New>New      
+                                            <input style="margin-left:4%;" name=condition type=radio value=Used>Used
+                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=Torn checked="checked">Torn Apart
                                 }}}}}
 
                                 @if(price){
@@ -72,13 +72,13 @@
 
                                 @if(email){
                                     <input style="border: solid; border-color: red;" name=price class="textf" placeholder="Oswego Email Address"></input>
-                                }else{ @if(newbook.seller==""){
+                                }else{ @if(newbook.seller==""||newbook.seller==null){
                                     <input name=email class="textf" placeholder="Oswego Email Address"></input>
                                     }else{
                                         <input name=email class="textf" value="@newbook.seller"></input>
                                 }}
 
-                                <input id="postbutton" type="submit" value="Post Item"/>
+                                <button id="postbutton">Post Item</button>
                             </form>
                         </div>
                 </div>

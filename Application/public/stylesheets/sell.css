@@ -1,5 +1,6 @@
 body {
     background-color: #fc6c64;
+    overflow:hidden;
 }
 #content {
     position: relative;
@@ -35,14 +36,12 @@ body {
     margin-bottom: 20px;
     font-size: 2.5vmin;
 }
-
 .entered{
     width: 90%;
     word-break: normal;
     font-size: 2.7vmin;
     margin-bottom: 10px;
 }
-
 #postbutton{
     float:right;
     margin-right: 15%;
@@ -50,8 +49,9 @@ body {
     width: 30%; 
     color: black;
     line-height: 30px;
-    height: 100%;
-    font-size: 1000%;
+    height: 10%;
+    border-radius: 75px;
+    font-size: 3vmin;
 }
 .picture{
     width: 33%;
