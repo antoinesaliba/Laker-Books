@@ -1,0 +1,27 @@
+<!DOCTYPE>
+<html>
+    <header>
+        <title>Laker Books</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/edition.css">
+        <script type="text/javascript" src="/public/javascripts/jquery-2.1.4.js"></script>
+        <script type="text/javascript">
+            jQuery('body').css('display','none');
+            jQuery(document).ready(function() {
+              jQuery('body').fadeIn();
+           });
+        </script>
+    </header>
+    <body>
+        <div id="content">
+            <div id="logo"></div>
+            <div class="buttons">
+                <form action='@routes.Application.gaveTitle()' method="GET">
+                <p style="width:100%; font-size:22px;" >Which edition is the textbook:   
+                    <input name=edition></input>
+                </p>
+                <p><button class="btn btn-4 btn-4a" id="sell">Next</button></p>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
