@@ -15,14 +15,17 @@
                             <img src="@result.imageURL" />
                         </div>
                         <div class="info">
-                            <p class="entered" style="font-size:4vmin;"><b>@result.title</b></p>
-                            <p class="entered">Authors: @result.authors</p>
-                            <p class="entered">Edition: @result.edition</p>
-                            <p class="entered">ISBN-13: @result.isbn13</p>
-                            <p class="entered">ISBN-10: @result.isbn10</p>
-                            <p class="entered">Condition: @result.state</p>
-                            <p class="entered">Price: @result.price</p>
-                            <p class="entered">Seller: @result.seller</p>
+                            <form action='@routes.Application.confirm()' method="GET">
+                                <p class="entered" style="font-size:4vmin;"><b>@result.title</b></p>
+                                <p class="entered">Authors: @result.authors</p>
+                                <p class="entered">Edition: @result.edition</p>
+                                <p class="entered">ISBN-13: @result.isbn13</p>
+                                <p class="entered">ISBN-10: @result.isbn10</p>
+                                <p class="entered">Condition: @result.state</p>
+                                <p class="entered">Price: @result.price</p>
+                                <p class="entered">Seller: @result.seller</p>
+                                <button id="postbutton">Post Item</button>
+                            </form>
                         </div>
                     </div>
                     }
