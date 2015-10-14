@@ -48,9 +48,9 @@ public class Application extends Controller {
 	    	//check to see if user entered ISBN or Title
 	    	if (temp.matches("[0-9]+")) {
 	    		if(temp.length() == 10)
-	    			sqlStr="select * from books where isbn10 =" + "'" + temp + "'" + ";";
+	    			sqlStr="select * from books where isbn10 =" + "'" + temp + "'" + "and buyer is NULL;";
 	    		else if(temp.length() == 13)
-	    			sqlStr="select * from books where isbn13 =" + "'" + temp + "'" + ";";
+	    			sqlStr="select * from books where isbn13 =" + "'" + temp + "'" + "and buyer is NULL;";
             }else{
             	session("title", input);
             	return ok(views.html.editionbuy.render());
@@ -65,6 +65,7 @@ public class Application extends Controller {
         	   }
             }
         }catch (SQLException k) {
+            k.printStackTrace();
             return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
         }
         return ok(views.html.results.render(bookresults));
@@ -77,7 +78,7 @@ public class Application extends Controller {
     	String edition = Form.form().bindFromRequest().get("edition");
 		ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
-    	String sqlStr = "select * from books where title =" + "'" + title + "' and edition =" + "'" + edition + "';";
+    	String sqlStr = "select * from books where title like " + "'%" + title + "%' and edition =" + "'" + edition + "'and buyer is NULL;";
     	System.out.println(sqlStr);
 
     	try{
@@ -91,13 +92,27 @@ public class Application extends Controller {
                 return ok(views.html.error.render("We are very sorry but there was no textbook found that matched what you entered. Please try again."));
             }else{
                 while(resp.next()!=false){
-                   bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller_email"), resp.getString("buyer_email"), resp.getString("image_url")));
+                   bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller"), resp.getString("buyer"), resp.getString("imageURL")));
                }
             }
     	}catch (SQLException k) {
+            k.printStackTrace();
             return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
         }
         return ok(views.html.results.render(bookresults));
+    }
+
+    public Result confirm(){
+        return ok(views.html.confirm.render(false));
+    }
+
+    public Result sold(){
+        String email = Form.form().bindFromRequest().get("email");
+        if(email==null||email.equals(""))
+            return ok(views.html.confirm.render(true));
+        else{
+            return ok(index.render());
+        }
     }
 
     public Result sellItem(){
@@ -233,9 +248,11 @@ public class Application extends Controller {
 		        stmt = conn.createStatement();
 
 		        String checkUser = "select * from users where email =" + "'" + seller_email + "'" + ";"; //looks inside database to see if anything matches search bar input
-	            ResultSet resp = stmt.executeQuery(checkUser);
+	            System.out.println(checkUser);
+                ResultSet resp = stmt.executeQuery(checkUser);
 	            if(resp.next()==false){
-	            	String newUser = "insert into users (email, name, plus, minus) values (?,?,0,0)";
+                    System.out.println("do");
+	            	String newUser = "insert into users (email, name, up, down) values (?,?,0,0)";
 	            	PreparedStatement user = conn.prepareStatement(newUser);
 			        user.setString(1, seller_email);
 			        user.setString(2, "Bob");
@@ -243,7 +260,7 @@ public class Application extends Controller {
 	            }
 
 		            
-		        String command = "insert into books (id, title, authors, edition, isbn13, isbn10, state, price, seller_email,buyer_email, image_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);";
+		        String command = "insert into books (id, title, authors, edition, isbn13, isbn10, state, price, seller,buyer, imageURL) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);";
 		        PreparedStatement comm = conn.prepareStatement(command);
 		        comm.setLong(1, millis);
 		        comm.setString(2, title);
@@ -258,6 +275,7 @@ public class Application extends Controller {
 		        comm.setString(11, image);
 		        comm.execute();
 		    }catch (SQLException k) {
+                k.printStackTrace();
 	            return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
 	        }
 		    return ok(index.render());

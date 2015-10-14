@@ -65,3 +65,14 @@ body {
     margin-left: 6%;
     margin-right: 5%;
 }
+#postbutton{
+    float:right;
+    margin-right: 15%;
+    margin-top: 1%;
+    width: 30%; 
+    color: black;
+    line-height: 30px;
+    height: 10%;
+    border-radius: 75px;
+    font-size: 3vmin;
+}

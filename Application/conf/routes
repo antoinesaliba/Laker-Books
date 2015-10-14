@@ -11,6 +11,12 @@ GET     /results                    controllers.Application.showResults()
 # Result book
 GET     /buytitle                    controllers.Application.buyTitle()
 
+# Confirmation of buying book
+GET     /confirm                   controllers.Application.confirm()
+
+# Bought book
+GET     /sold                    controllers.Application.sold()
+
 # Sell book
 GET     /sell                    controllers.Application.sellItem()
 
