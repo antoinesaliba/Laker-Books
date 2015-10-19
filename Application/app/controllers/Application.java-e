@@ -61,7 +61,7 @@ public class Application extends Controller {
                 return ok(views.html.error.render("No textbooks found that matched what you entered. Please try again."));
             }else{
                 while(resp.next()!=false){
-            	   bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller_email"), resp.getString("buyer_email"), resp.getString("image_url")));
+            	   bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller"), resp.getString("buyer"), resp.getString("imageURL")));
         	   }
             }
         }catch (SQLException k) {
@@ -223,7 +223,7 @@ public class Application extends Controller {
 
     	int price = 0;
 
-    	String condition = Form.form().bindFromRequest().get("condition");
+    	String condition = Form.form().bindFromRequest().get("optradio");
     	if(!Form.form().bindFromRequest().get("price").equals(""))
     		price = Integer.parseInt(Form.form().bindFromRequest().get("price"));
     	String seller_email = Form.form().bindFromRequest().get("email");
@@ -233,7 +233,7 @@ public class Application extends Controller {
     	}
     	if(price==0)
     		priceError=true;
-    	if(seller_email==""||seller_email==null)
+    	if(seller_email.equals("")||seller_email==null)
     		emailError=true;
 
     	if(conditionError||priceError||emailError){

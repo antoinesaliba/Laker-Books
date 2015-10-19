@@ -2,6 +2,7 @@
 <html>
     <header>
         <title>Laker Books</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/index.css">
         <script type="text/javascript" src="/public/javascripts/jquery-2.1.4.js"></script>
         <script type="text/javascript">
@@ -36,26 +37,36 @@
                 <p><button class="btn btn-4 btn-4a" id="sell" onClick="#">Sell Textbook</button></p>
             </div>
         </div>
-        <div id="search" style="display:none;">
-            <div id="logo"></div>
-            <div class="flexsearch">
-			         <form class="flexsearch--form" action='@routes.Application.showResults()' method="GET">
-				        <div class="flexsearch--input-wrapper">
-					       <input class="flexsearch--input" name="input" type="search" placeholder="Enter Textbook Title or ISBN" style="color:#FFFFFF">
-				        <input class="flexsearch--submit" type="submit" value="&#10140;"/>
+        <div style="display:none;" id="search" class="container-fluid container-table">
+            <div class="row vertical-center-row">
+                <div class="col-xs-12">
+                    <div class="row" style="height:50%;">
+                        <form class="flexsearch--form" action='@routes.Application.showResults()' method="GET">
+                        <div class="col-md-8 col-md-push-2 col-xs-10 col-xs-push-1"> 
+                            <input class="flexsearch--input" name="input" type="search" placeholder="Enter Textbook Title or ISBN" style="color:#FFFFFF"/>
                         </div>
-			         </form>
-            </div>
-        </div>
-        <div id="sellItem" style="display:none;">
-            <div id="logo"></div>
-            <div class="flexsearch">
-                     <form class="flexsearch--form" action='@routes.Application.sellItem()' method="GET">
-                        <div class="flexsearch--input-wrapper">
-                           <input class="flexsearch--input" name="input" type="search" placeholder="Enter Textbook Title or ISBN" style="color:#FFFFFF">
+                        <div class="col-xs-1 col-md-push-1 col-xs-pull-1">
                         <input class="flexsearch--submit" type="submit" value="&#10140;"/>
                         </div>
-                     </form>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="sellItem" class="container-fluid container-table" style="display:none;">
+            <div class="row vertical-center-row">
+                <div class="col-xs-12">
+                    <div class="row" style="height:50%;">
+                        <form class="flexsearch--form" action='@routes.Application.sellItem()' method="GET">
+                        <div class="col-md-8 col-md-push-2 col-xs-10 col-xs-push-1"> 
+                            <input class="flexsearch--input" name="input" type="search" placeholder="Enter Textbook Title or ISBN" style="color:#FFFFFF"/>
+                        </div>
+                        <div class="col-xs-1 col-md-push-1 col-xs-pull-1">
+                        <input class="flexsearch--submit" type="submit" value="&#10140;"/>
+                        </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </body>

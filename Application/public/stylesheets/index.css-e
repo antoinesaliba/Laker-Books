@@ -47,6 +47,7 @@ body {
 
 .btn-4:hover {
 	background: #FC8882 ;
+    color: #fff;
 }
 
 .btn-4:before {
@@ -72,6 +73,7 @@ body {
 
 .btn-4a:hover:before {
 	left: 80%;
+    color: #fff;
 }
 
 /*----------------------------------------------------------*/
@@ -86,6 +88,16 @@ body {
     height:100%;
 }
 
+.container-table {
+    display: table;
+    width: 100%;
+}
+
+.vertical-center-row {
+    display: table-cell;
+    vertical-align: middle;
+}
+
 .flexsearch {
     width: auto;
     height: 9%;
@@ -97,47 +109,36 @@ body {
 
 
 .flexsearch--form {
-	position: relative;
+    position: relative;
     height: 100%;
-}
-
-.flexsearch--input-wrapper {
-	padding: 0 6 0 0; /* Right padding for submit button width */
-    text-align: center;
 }
 
 .flexsearch--input {
     font-size: 4.0vmin;
-    width: 70%;
- 	height: 100%;
+    width: 100%;
     background: transparent;
+    height: 100%;
     border: none;
-    line-height: 60px;
     padding-left: 3%;
     -webkit-box-sizing: content-box;
-	-moz-box-sizing: content-box;
-	box-sizing: content-box;
-	border-color: #FFF;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    border-color: #FFF;
     border-radius: 35px; /* (height/2) + border-width */
     border-style: solid;
     font-family:  Exo;
-	border-width: 3px;
-    margin-top: 15px;
+    border-width: 3px;
     color: #888;
-	-webkit-appearance: none;
-	-moz-appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
-	
+    
 .flexsearch--submit {
-    position: relative;
-    margin-left: 65%;
-    top: -93px;
+    height: 100%;
     border: none;
-	margin-top: 20px; /* margin-top + border-width */
-	background: transparent;
+    background: transparent;
     color: #FFFFFF;
     font-size: 4.2vmin;
-    line-height: 73px;
 }
 
 .flexsearch--input::-webkit-input-placeholder{
@@ -150,7 +151,7 @@ body {
 }
 
 .flexsearch--input:focus.flexsearch--submit {
- 	color: #888; 
+    color: #888; 
 }
 
 .flexsearch--submit:hover {
@@ -159,7 +160,7 @@ body {
 }
 
 ::-webkit-input-placeholder {
-	color: #888;  
+    color: #888;  
 }
 
 input:-moz-placeholder {

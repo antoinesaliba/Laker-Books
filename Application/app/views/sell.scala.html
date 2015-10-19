@@ -1,87 +1,88 @@
 @(newbook: bookObject, condition: Boolean, price: Boolean, email: Boolean)
 
+<!DOCTYPE>
 <html>
     <header>
         <title>Laker Books</title>
-                <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/sell.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" media="screen" href="public/stylesheets/sell.css">
     </header>
     <body>
-        <div id="content">
-            <div id="logo"></div>
-                    <div id="results">
-                        <div class="picture">
-                            <img src="@newbook.imageURL" />
+        <div id="content" class="container">
+                    <div id="results" class="row">
+                        <div class="col-sm-4 col-xs-6 col-xs-push-3 col-sm-push-0">
+                            <img src="@newbook.imageURL" class="img-responsive" id="image"/>
                         </div>
-                        <div class="info">
-                            <form class="bookdetails" action='@routes.Application.postItem()' method="GET">
-                                @if(newbook.title==null){
-                                    <input name="input" class="textf" placeholder="Title"></input>
-                                }else{
-                                    <p class="entered" style="font-size:4vmin;"><b>@newbook.title</b></p>
-                                }
-                                @if(newbook.authors==null){
-                                    <input name="input" class="textf" placeholder="Authors"></input>
-                                }else{
-                                    <p  class="entered">Authors: @newbook.authors</p>
-                                }
-                                @if(newbook.edition==null){
-                                    <input name="input" class="textf" placeholder="Edition"></input>
-                                }else{
-                                    <p  class="entered">Edition: @newbook.edition</p>
-                                }
-                                @if(newbook.isbn13==null){
-                                    <input name="input" class="textf" placeholder="ISBN-13"></input>
-                                }else{
-                                    <p class="entered">ISBN-13: @newbook.isbn13</p>
-                                }
-                                @if(newbook.isbn10==null){
-                                    <input name="input" class="textf" placeholder="ISBN-10"></input>
-                                }else{
-                                    <p class="entered">ISBN-10: @newbook.isbn10</p>
-                                }
-                                <br>
-                                @if(condition){
-                                    <input name=condition type=radio value=new style="outline: 1px solid red;">New      
-                                    <input style="margin-left:4%; outline: 1px solid red;" name=condition type=radio value=used>Used
-                                    <input style="margin-bottom: 3%; margin-left: 4%; outline: 1px solid red;" name=condition type=radio value=torn>Torn Apart
-                                }else{ @if(newbook.state==null){
-                                    <input name=condition type=radio value=new>New      
-                                    <input style="margin-left:4%;" name=condition type=radio value=used>Used
-                                    <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=torn>Torn Apart
-                                    }else{ @if(newbook.state.equals("new")){
-                                            <input name=condition type=radio value=New checked="checked">New      
-                                            <input style="margin-left:4%;" name=condition type=radio value=Used>Used
-                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=Torn>Torn Apart
+                        <div class="col-sm-8 col-xs-10 col-sm-push-0 col-xs-push-1" style="padding-top:3%;">
+                            <form action='@routes.Application.postItem()' method="GET">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <p class="entered" style="font-size:4vmin;"><b>@newbook.title</b></p>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <p class="entered">Authors: @newbook.authors</p>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <p class="entered">Edition: @newbook.edition</p>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <p class="entered">ISBN-13: @newbook.isbn13</p>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <p class="entered">ISBN-10: @newbook.isbn10</p>
+                                    </div>
+                                    <div class="col-xs-9 form-group">
+                                        <label for="email">Oswego Email</label>
+                                        @if(email){
+                                            <input style="border: solid; border-color: red;" type="email" class="form-control" name="email"></input>
+                                        }else{ @if(newbook.seller==""||newbook.seller==null){
+                                            <input type="email" class="form-control" name="email"></input>
+                                        }else{
+                                            <input type="email" class="form-control" name="email" value="@newbook.seller"></input>
+                                        }}
+                                    </div>
+                                    <div class="col-xs-12" style="margin-bottom: 3%;">
+                                        @if(condition){
+                                            <label class="radio-inline"><input type="radio" name="optradio" style="outline: 1px solid red;" value="new">New</label>
+                                            <label class="radio-inline"><input type="radio" name="optradio" style="outline: 1px solid red;" value="used">Used</label>
+                                            <label class="radio-inline"><input type="radio" name="optradio" style="outline: 1px solid red;" value="torn">Torn Apart</label>
+                                        }else{ @if(newbook.state==null){
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="new">New</label>  
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="used">Used</label>
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="torn">Torn Apart</label>
+                                        }else{ @if(newbook.state.equals("new")){
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="new" checked="checked">New</label>  
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="used">Used</label>
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="torn">Torn Apart</label>
                                         }else{ @if(newbook.state.equals("used")){
-                                            <input name=condition type=radio value=New>New      
-                                            <input style="margin-left:4%;" name=condition type=radio value=Used checked="true">Used
-                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=Torn Apart >Torn Apart
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="new">New</label>     
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="used" checked="checked">Used</label>
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="torn">Torn Apart</label>
                                         }else{ @if(newbook.state.equals("torn")){
-                                            <input name=condition type=radio value=New>New      
-                                            <input style="margin-left:4%;" name=condition type=radio value=Used>Used
-                                            <input style="margin-bottom: 3%; margin-left: 4%;" name=condition type=radio value=Torn checked="checked">Torn Apart
-                                }}}}}
-
-                                @if(price){
-                                    <input style="border: solid; border-color: red;" name=price class="textf" placeholder="Price"></input>
-                                }else{ @if(newbook.price==0){
-                                    <input name=price class="textf" placeholder="Price"></input>
-                                    }else{
-                                        <input name=price class="textf" value="@newbook.price"></input>
-                                }}
-
-                                @if(email){
-                                    <input style="border: solid; border-color: red;" name=price class="textf" placeholder="Oswego Email Address"></input>
-                                }else{ @if(newbook.seller==""||newbook.seller==null){
-                                    <input name=email class="textf" placeholder="Oswego Email Address"></input>
-                                    }else{
-                                        <input name=email class="textf" value="@newbook.seller"></input>
-                                }}
-
-                                <button id="postbutton">Post Item</button>
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="new">New</label>
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="used">Used</label>
+                                            <label class="radio-inline"><input type="radio" name="optradio" value="torn" checked="checked">Torn Apart</label>
+                                        }}}}}
+                                    </div>
+                                    <div class="col-xs-4 input-group hide-inputbtns" style="margin-left:15px; margin-bottom:3%;">
+                                        <span class="input-group-addon">$</span>
+                                        @if(price){
+                                        <input style="border: solid; border-color: red;" type="number" name="price" placeholder="Price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
+                                        }else{ @if(newbook.price==0){
+                                            <input type="number" name="price" placeholder="Price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
+                                        }else{
+                                            <input type="number" name="price" value="@newbook.price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
+                                        }}
+                                    </div>
+                                    <div class="col-xs-6 col-xs-push-3">
+                                        <button id="postbutton" style="width:100%;">Post Book</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
-                </div>
-        </div>
+                    </div>
+            </div>
     </body>
 </html>
