@@ -10,9 +10,7 @@ body {
 }
 #results {
     background: #FFFFFF;
-    height: 75%; 
-    width: 85%;
-    left: 15%;
+    width: 90%;
     margin: auto;
     margin-bottom: 5%;
     border-radius: 75px;
@@ -24,6 +22,7 @@ body {
     border-radius: 75px;
     box-sizing:border-box;
     -moz-box-sizing:border-box;
+    padding-bottom: 10%;
 }
 .bookdetails{
     height: inherit;
@@ -43,13 +42,12 @@ body {
     margin-bottom: 10px;
 }
 #postbutton{
-    float:right;
     margin-right: 15%;
-    margin-top: 1%;
-    width: 30%; 
-    color: black;
+    margin-top: 3%;
+    width: 50%; 
+    color: white;
     line-height: 30px;
-    height: 10%;
+    height: 7%;
     border-radius: 75px;
     font-size: 3vmin;
 }
@@ -65,14 +63,10 @@ body {
     margin-left: 6%;
     margin-right: 5%;
 }
-#postbutton{
-    float:right;
-    margin-right: 15%;
-    margin-top: 1%;
-    width: 30%; 
-    color: black;
-    line-height: 30px;
-    height: 10%;
-    border-radius: 75px;
-    font-size: 3vmin;
+
+#image{
+    padding-top: 10%; 
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-bottom: 10%;
 }
