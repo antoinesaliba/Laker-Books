@@ -4,6 +4,7 @@
 <html>
     <header>
         <title>Laker Books</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/confirm.css">
         <script type="text/javascript" src="/public/javascripts/jquery-2.1.4.js"></script>
         <script type="text/javascript">
@@ -14,8 +15,8 @@
         </script>
     </header>
     <body>
+        <div id="logo" style="margin-left:1%; margin-top:1%;"><a href="http://localhost:9000">Laker Books</a></div>
         <div id="content">
-            <div id="logo"></div>
             <div class="buttons">
                 <form action='@routes.Application.sold()' method="GET">
                     <p style="width:100%; font-size:22px;">You are about to buy this textbook. Please enter your email address and you will be put into contact with the person selling the book through email.

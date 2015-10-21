@@ -2,17 +2,49 @@ body {
     background-color: #fc6c64;
     height: auto;
 }
+
+#logo{
+    position:relative;
+    color: white;
+    font-size: 2em;
+    font-family:  Exo;
+    text-decoration: none;
+}
+
 #content {
     position: relative;
     width: 100%;
     height: auto;
-    margin-top: 10%;
+    margin-top: 5%;
 }
+
+a:link {
+    color: white;
+    text-decoration: none;
+}
+
+/* visited link */
+a:visited {
+    color: white;
+    text-decoration: none;
+}
+
+/* mouse over link */
+a:hover {
+    color: white;
+    text-decoration: none;
+}
+
+/* selected link */
+a:active {
+    color: white;
+    text-decoration: none;
+}
+
 #results {
     background: #FFFFFF;
     width: 90%;
     margin: auto;
-    margin-bottom: 5%;
     border-radius: 75px;
 }
 .info{

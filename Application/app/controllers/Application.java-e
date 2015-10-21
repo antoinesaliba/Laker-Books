@@ -89,7 +89,7 @@ public class Application extends Controller {
             
     		ResultSet resp = stmt.executeQuery(sqlStr);
             if(resp.next()==false){
-                return ok(views.html.error.render("We are very sorry but there was no textbook found that matched what you entered. Please try again."));
+                return ok(views.html.error.render("Sorry, no one is selling the specified textbook on Laker Books. Please try again at a later time."));
             }else{
                 while(resp.next()!=false){
                    bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller"), resp.getString("buyer"), resp.getString("imageURL")));
@@ -185,10 +185,10 @@ public class Application extends Controller {
 
 
 	    	}else{
-	    		//apiRequest="http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&query="+input;
+	    		session("title", input);
 	    		return ok(views.html.edition.render());
 	    	}
-    } catch (ParserConfigurationException e) {
+    }catch (ParserConfigurationException e) {
             return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
         }catch (MalformedURLException f) {
             return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
@@ -201,7 +201,72 @@ public class Application extends Controller {
 
     public Result sellTitle(){
     	String edition = Form.form().bindFromRequest().get("edition");
-    	return ok(index.render());
+        String title = session("title");
+        String apiRequest = null;
+
+        if(edition==null||edition.equals("")){
+            return ok(index.render());
+        }else{
+            try{
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                
+                apiRequest="http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&query="+title.replace(" ","%20");
+                Document doc = dBuilder.parse(new URL(apiRequest).openStream());
+                doc.getDocumentElement().normalize();
+                NodeList nList = doc.getElementsByTagName("results");
+
+                if (nList.getLength() < 2) {
+                    return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+                } else {
+                    Node nNode = nList.item(1); //xml has two results tag, we want the second with all the books in it
+                    Element element = (Element) nNode;
+                    String isbn10=null;
+                    String isbn13=null;
+                    String authors=null;
+                    String image=null;
+
+                    NodeList books = element.getElementsByTagName("book"); //from the second results tag, get all the book subelements
+                    for(int i=0;i<books.getLength();i++){
+                        Node temp = books.item(i);
+                        if (temp.getNodeType() == Node.ELEMENT_NODE) {
+                            Element eElement = (Element) temp;
+                            System.out.println(eElement.getElementsByTagName("title").item(0).getTextContent().trim());
+                            if(eElement.getElementsByTagName("title").item(0).getTextContent().trim().equals(title) && eElement.getElementsByTagName("edition").item(0).getTextContent().trim().equals(edition)){
+                                authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
+                                authors = authors.replaceAll(";"," & "); //make the output of the authors more readable
+                                
+                                isbn10 = eElement.getElementsByTagName("isbn").item(0).getTextContent().trim();
+                                isbn13 = eElement.getElementsByTagName("ean").item(0).getTextContent().trim();
+
+                                image = "http://www.directtextbook.com/large/"+isbn10+".jpg";
+
+                                bookObject newbook = new bookObject(0,title,authors,edition,isbn13,isbn10,null,0,null,null,image);
+                                
+                                session("title", title);
+                                session("authors", authors);
+                                session("edition", edition);
+                                session("isbn13", isbn13);
+                                session("isbn10", isbn10);
+                                session("image", image);
+                                
+                                return ok(views.html.sell.render(newbook,false,false,false));
+                            }
+
+                        }
+                    }
+                    return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+                    }
+            }catch (ParserConfigurationException e) {
+                return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+            }catch (MalformedURLException f) {
+                return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+            }catch (IOException e) {
+                return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+            }catch (SAXException e) {
+                return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+            }
+        }
     }
     public Result postItem(){
     	Connection conn = null;
@@ -248,10 +313,8 @@ public class Application extends Controller {
 		        stmt = conn.createStatement();
 
 		        String checkUser = "select * from users where email =" + "'" + seller_email + "'" + ";"; //looks inside database to see if anything matches search bar input
-	            System.out.println(checkUser);
                 ResultSet resp = stmt.executeQuery(checkUser);
 	            if(resp.next()==false){
-                    System.out.println("do");
 	            	String newUser = "insert into users (email, name, up, down) values (?,?,0,0)";
 	            	PreparedStatement user = conn.prepareStatement(newUser);
 			        user.setString(1, seller_email);

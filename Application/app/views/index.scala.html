@@ -29,8 +29,8 @@
         </script>
     </header>
     <body>
+        <div id="logo" style="margin-left:1%; margin-top:1%;"><a href="http://localhost:9000">Laker Books</a></div>
         <div id="content">
-            <div id="logo"></div>
             <div class="buttons">
                 <p><button class="btn btn-4 btn-4a" id="buy" onClick="#">Buy Textbook</button>
                 </p>
@@ -56,13 +56,13 @@
         <div id="sellItem" class="container-fluid container-table" style="display:none;">
             <div class="row vertical-center-row">
                 <div class="col-xs-12">
-                    <div class="row" style="height:50%;">
+                    <div class="row">
                         <form class="flexsearch--form" action='@routes.Application.sellItem()' method="GET">
                         <div class="col-md-8 col-md-push-2 col-xs-10 col-xs-push-1"> 
                             <input class="flexsearch--input" name="input" type="search" placeholder="Enter Textbook Title or ISBN" style="color:#FFFFFF"/>
                         </div>
                         <div class="col-xs-1 col-md-push-1 col-xs-pull-1">
-                        <input class="flexsearch--submit" type="submit" value="&#10140;"/>
+                        <input class="flexsearch--submit" type="submit" value="&#10140;" style="margin-top:3px;"/>
                         </div>
                         </form>
                     </div>

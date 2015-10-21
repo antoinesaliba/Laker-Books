@@ -2,6 +2,7 @@
 <html>
     <header>
         <title>Laker Books</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/editionbuy.css">
         <script type="text/javascript" src="/public/javascripts/jquery-2.1.4.js"></script>
         <script type="text/javascript">
@@ -12,8 +13,8 @@
         </script>
     </header>
     <body>
+        <div id="logo" style="margin-left:1%; margin-top:1%;"><a href="http://localhost:9000">Laker Books</a></div>
         <div id="content">
-            <div id="logo"></div>
             <div class="buttons">
                 <form action='@routes.Application.buyTitle()' method="GET">
                 <p style="width:100%; font-size:22px;" >Which edition is the textbook:   
