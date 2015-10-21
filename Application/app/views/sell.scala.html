@@ -6,10 +6,13 @@
         <title>Laker Books</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <script type="text/javascript" src="public/javascripts/jquery-2.1.4.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="public/javascripts/accounting.min.js"></script>
         <link rel="stylesheet" type="text/css" media="screen" href="public/stylesheets/sell.css">
     </header>
     <body>
+        <div id="logo" style="margin-left:1%; margin-top:1%;"><a href="http://localhost:9000">Laker Books</a></div>
         <div id="content" class="container">
                     <div id="results" class="row">
                         <div class="col-sm-4 col-xs-6 col-xs-push-3 col-sm-push-0">
@@ -69,11 +72,11 @@
                                     <div class="col-xs-4 input-group hide-inputbtns" style="margin-left:15px; margin-bottom:3%;">
                                         <span class="input-group-addon">$</span>
                                         @if(price){
-                                        <input style="border: solid; border-color: red;" type="number" name="price" placeholder="Price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
+                                        <input id="price" style="border: solid; border-color: red;" type="number" name="price" placeholder="Price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
                                         }else{ @if(newbook.price==0){
-                                            <input type="number" name="price" placeholder="Price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
+                                            <input id="price" type="number" name="price" placeholder="Price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
                                         }else{
-                                            <input type="number" name="price" value="@newbook.price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
+                                            <input id="price" type="number" name="price" value="@newbook.price" min="0.00" step="1.00" data-number-to-fixed="2" data-number-stepfactor="100" class="form-control currency"/>
                                         }}
                                     </div>
                                     <div class="col-xs-6 col-xs-push-3">
