@@ -1,3 +1,5 @@
+@(edition: Boolean) 
+
 <!DOCTYPE>
 <html>
     <header>
@@ -17,9 +19,15 @@
         <div id="content">
             <div class="buttons">
                 <form action='@routes.Application.sellTitle()' method="GET">
-                <p style="width:100%; font-size:22px;" >Which edition is the textbook:   
-                    <input name=edition></input>
-                </p>
+                @if(edition){
+                    <p style="width:100%; font-size:22px;" >Which edition is the textbook:   
+                        <input name=edition style="border: solid; border-color: red;"></input>
+                    </p>
+                }else{
+                    <p style="width:100%; font-size:22px;">Which edition is the textbook:   
+                        <input name=edition></input>
+                    </p>
+                }
                 <p><button class="btn btn-4 btn-4a" id="sell">Next</button></p>
                 </form>
             </div>

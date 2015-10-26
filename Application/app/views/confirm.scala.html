@@ -19,11 +19,13 @@
         <div id="content">
             <div class="buttons">
                 <form action='@routes.Application.sold()' method="GET">
-                    <p style="width:100%; font-size:22px;">You are about to buy this textbook. Please enter your email address and you will be put into contact with the person selling the book through email.
+                    <p style="width:80%; margin: auto;  font-size:22px;">You are about to buy this textbook. Please enter your email address and you will be put into contact with the person selling the book through email.
+                    <br>
+                    <br>
                     @if(email){
-                        <input style="border: solid; border-color: red;" name=email class="textf" placeholder="Email"></input>
+                        <p><input style="border: solid; border-color: red;" name=email class="textf" placeholder="Email"></input></p>
                     }else{
-                        <input name=email class="textf" placeholder="Email"></input>   
+                        <p><input name=email class="textf" placeholder="Email"></input></p>   
                     }
                 </p>
                 <p><button class="btn btn-4 btn-4a" id="sell">Next</button></p>

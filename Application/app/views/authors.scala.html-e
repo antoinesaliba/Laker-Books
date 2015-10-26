@@ -1,11 +1,11 @@
-@(edition: Boolean) 
+@(author: Boolean) 
 
 <!DOCTYPE>
 <html>
     <header>
         <title>Laker Books</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/edition.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/authors.css">
         <script type="text/javascript" src="/public/javascripts/jquery-2.1.4.js"></script>
         <script type="text/javascript">
             jQuery('body').css('display','none');
@@ -19,13 +19,13 @@
         <div id="content">
             <div class="buttons">
                 <form action='@routes.Application.sellTitle()' method="GET">
-                @if(edition){
-                    <p style="width:100%; font-size:22px;" >Which edition is the textbook:   
-                        <input name=edition style="border: solid; border-color: red;"></input>
+                @if(author){
+                    <p style="width:100%; font-size:22px; outline: 1px solid red;">Please enter one of the authors of the textbook:   
+                        <input name=author></input>
                     </p>
                 }else{
-                    <p style="width:100%; font-size:22px;">Which edition is the textbook:   
-                        <input name=edition></input>
+                    <p style="width:100%; font-size:22px;">Please enter one of the authors of the textbook:   
+                        <input name=author></input>
                     </p>
                 }
                 <p><button class="btn btn-4 btn-4a" id="sell">Next</button></p>

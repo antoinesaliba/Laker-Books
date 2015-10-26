@@ -109,7 +109,8 @@ a:active {
 
 input{
     height: auto;  
-    width: 7%;
+    width: 20%;
     padding: 10; 
+    color: black;
     font-size: 20px;
 }

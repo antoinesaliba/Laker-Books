@@ -53,16 +53,16 @@ public class Application extends Controller {
 	    			sqlStr="select * from books where isbn13 =" + "'" + temp + "'" + "and buyer is NULL;";
             }else{
             	session("title", input);
-            	return ok(views.html.editionbuy.render());
+            	return ok(views.html.editionbuy.render(false));
             }	
 
             ResultSet resp = stmt.executeQuery(sqlStr);
             if(resp.next()==false){
                 return ok(views.html.error.render("No textbooks found that matched what you entered. Please try again."));
             }else{
-                while(resp.next()!=false){
+                do{
             	   bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller"), resp.getString("buyer"), resp.getString("imageURL")));
-        	   }
+        	   }while(resp.next()!=false);
             }
         }catch (SQLException k) {
             k.printStackTrace();
@@ -78,40 +78,63 @@ public class Application extends Controller {
     	String edition = Form.form().bindFromRequest().get("edition");
 		ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
-    	String sqlStr = "select * from books where title like " + "'%" + title + "%' and edition =" + "'" + edition + "'and buyer is NULL;";
-    	System.out.println(sqlStr);
+		if(edition==null||edition.equals("")){
+			return ok(views.html.editionbuy.render(true));
+		}else{
+	    	String sqlStr = "select * from books where title like " + "'%" + title + "%' and edition =" + "'" + edition + "'and buyer is NULL;";
 
-    	try{
-    		conn = DriverManager.getConnection(
-                       "jdbc:mysql://localhost:3306/lakerbooks", "root", "password"); // Opens connection with mysql database
-            
-            stmt = conn.createStatement();
-            
-    		ResultSet resp = stmt.executeQuery(sqlStr);
-            if(resp.next()==false){
-                return ok(views.html.error.render("Sorry, no one is selling the specified textbook on Laker Books. Please try again at a later time."));
-            }else{
-                while(resp.next()!=false){
-                   bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller"), resp.getString("buyer"), resp.getString("imageURL")));
-               }
-            }
-    	}catch (SQLException k) {
-            k.printStackTrace();
-            return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
-        }
-        return ok(views.html.results.render(bookresults));
+	    	try{
+	    		conn = DriverManager.getConnection(
+	                       "jdbc:mysql://localhost:3306/lakerbooks", "root", "password"); // Opens connection with mysql database
+	            
+	            stmt = conn.createStatement();
+	            
+	    		ResultSet resp = stmt.executeQuery(sqlStr);
+	            if(resp.next()==false){
+	                return ok(views.html.error.render("Sorry, no one is selling the specified textbook on Laker Books. Please try again at a later time."));
+	            }else{
+	                do{
+	                   bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller"), resp.getString("buyer"), resp.getString("imageURL")));
+	                } while(resp.next()!=false);
+	            }
+	    	}catch (SQLException k) {
+	            k.printStackTrace();
+	            return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+	        }
+	        return ok(views.html.results.render(bookresults));
+	    }
     }
 
     public Result confirm(){
+        session("id", Form.form().bindFromRequest().get("id"));
         return ok(views.html.confirm.render(false));
     }
 
     public Result sold(){
         String email = Form.form().bindFromRequest().get("email");
+        String id = session("id");
         if(email==null||email.equals(""))
             return ok(views.html.confirm.render(true));
         else{
-            return ok(index.render());
+            Connection conn = null;
+            Statement stmt = null;
+            String sqlStr = null;
+
+            try{
+
+                conn = DriverManager.getConnection(
+                       "jdbc:mysql://localhost:3306/lakerbooks", "root", "password"); // Opens connection with mysql database
+            
+                stmt = conn.createStatement();
+                sqlStr = "delete from books where id = " + id + ";";
+                System.out.println(sqlStr);
+                stmt.execute(sqlStr);
+                return ok(index.render());
+            
+            }catch (SQLException k) {
+                k.printStackTrace();
+                return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+            }   
         }
     }
 
@@ -140,7 +163,7 @@ public class Application extends Controller {
 	    		NodeList nList = doc.getElementsByTagName("book");
 
 	    		if (nList.getLength() == 0) {
-	                return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+	                return ok(views.html.error.render("Unfortunately, no information was found for the textbook specified, please make sure you have entered the information correctly and try again."));
 	            } else {
 
 	                Node nNode = nList.item(0);
@@ -186,7 +209,7 @@ public class Application extends Controller {
 
 	    	}else{
 	    		session("title", input);
-	    		return ok(views.html.edition.render());
+	    		return ok(views.html.edition.render(false));
 	    	}
     }catch (ParserConfigurationException e) {
             return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
@@ -201,24 +224,35 @@ public class Application extends Controller {
 
     public Result sellTitle(){
     	String edition = Form.form().bindFromRequest().get("edition");
+    	String auth = Form.form().bindFromRequest().get("author");
         String title = session("title");
         String apiRequest = null;
+        ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
         if(edition==null||edition.equals("")){
-            return ok(index.render());
-        }else{
+        	if(!session("auth").equals("yes")){
+            	return ok(views.html.edition.render(true));
+            }else{
+            	if(auth==null||auth.equals("")){
+            		return ok(views.html.authors.render(true));
+            	}else{
+            		edition = session("edition");
+            		session("auth","no");
+            	}
+            }
+        }
             try{
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 
-                apiRequest="http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&query="+title.replace(" ","%20");
+                apiRequest="http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&amp;query="+title.replace(" ","%20");
                 Document doc = dBuilder.parse(new URL(apiRequest).openStream());
                 doc.getDocumentElement().normalize();
                 NodeList nList = doc.getElementsByTagName("results");
 
                 if (nList.getLength() < 2) {
-                    return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
-                } else {
+                    return ok(views.html.error.render("Unfortunately, no information was found for the textbook specified, please make sure you have entered the information correctly and try again."));
+                }else{
                     Node nNode = nList.item(1); //xml has two results tag, we want the second with all the books in it
                     Element element = (Element) nNode;
                     String isbn10=null;
@@ -242,21 +276,42 @@ public class Application extends Controller {
                                 image = "http://www.directtextbook.com/large/"+isbn10+".jpg";
 
                                 bookObject newbook = new bookObject(0,title,authors,edition,isbn13,isbn10,null,0,null,null,image);
-                                
-                                session("title", title);
-                                session("authors", authors);
-                                session("edition", edition);
-                                session("isbn13", isbn13);
-                                session("isbn10", isbn10);
-                                session("image", image);
+                                bookresults.add(newbook);
+                               
                                 
                                 return ok(views.html.sell.render(newbook,false,false,false));
                             }
 
                         }
                     }
-                    return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
-                    }
+                    if(bookresults.size()==1){
+                    	session("title", title);
+                        session("authors", authors);
+                        session("edition", edition);
+                        session("isbn13", isbn13);
+                        session("isbn10", isbn10);
+                        session("image", image);
+                    	return ok(views.html.sell.render(bookresults.get(0),false,false,false));
+                    }else if(auth!=null&&!auth.equals("")){
+                    	for(int b=0;b<bookresults.size();b++){
+                    		if(bookresults.get(b).authors.contains(auth)){
+                    			bookObject temp = bookresults.get(b);
+                    			session("title", temp.title);
+		                        session("authors", temp.authors);
+		                        session("edition", temp.edition);
+		                        session("isbn13", temp.isbn13);
+		                        session("isbn10", temp.isbn10);
+		                        session("image", temp.imageURL);
+		                    	return ok(views.html.sell.render(temp,false,false,false));
+                    		}
+                    	}
+                    }else{
+	                    session("auth", "yes");
+	                    session("edition",edition);
+	                    return ok(views.html.authors.render(false));
+	                }
+                	return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+            	}
             }catch (ParserConfigurationException e) {
                 return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
             }catch (MalformedURLException f) {
@@ -266,7 +321,6 @@ public class Application extends Controller {
             }catch (SAXException e) {
                 return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
             }
-        }
     }
     public Result postItem(){
     	Connection conn = null;

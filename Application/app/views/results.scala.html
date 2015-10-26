@@ -19,6 +19,7 @@
                         </div>
                         <div class="col-sm-8 col-xs-10 col-sm-push-0 col-xs-push-1" style="padding-top:3%;">
                             <form action='@routes.Application.confirm()' method="GET">
+                                <input style="display:none;" name=id value="@result.id"></input>
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <p class="entered" style="font-size:4vmin;"><b>@result.title</b></p>
