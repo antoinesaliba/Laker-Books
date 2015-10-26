@@ -1,6 +1,5 @@
 body {
     background-color: #fc6c64;
-    font-family:  STEINEM;
 }
 #content{
     display:table;
@@ -109,8 +108,7 @@ a:active {
 
 input{
     height: auto;  
-    width: 20%;
-    padding: 10; 
-    color: black;
+    width: 20%; 
     font-size: 20px;
+    color: black;
 }
