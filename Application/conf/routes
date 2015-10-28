@@ -5,6 +5,9 @@
 # Home page
 GET     /                           controllers.Application.index()
 
+# Home page
+GET     /home                         controllers.Application.home(action: Int)
+
 # Result books
 GET     /results                    controllers.Application.showResults()
 

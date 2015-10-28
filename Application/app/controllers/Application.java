@@ -27,6 +27,14 @@ public class Application extends Controller {
         return ok(index.render());
     }
 
+    public Result home(int action) {
+        return ok(home.render(action));
+    }
+
+    public Result redirectHome(int action) {
+        return redirect(routes.Application.home(action));
+    }
+
     public Result showResults(){
     	Connection conn = null;
         Statement stmt = null;
@@ -118,6 +126,7 @@ public class Application extends Controller {
         else{
             Connection conn = null;
             Statement stmt = null;
+            Statement stmt2 = null;
             String sqlStr = null;
 
             try{
@@ -126,10 +135,17 @@ public class Application extends Controller {
                        "jdbc:mysql://localhost:3306/lakerbooks", "root", "password"); // Opens connection with mysql database
             
                 stmt = conn.createStatement();
-                sqlStr = "delete from books where id = " + id + ";";
-                System.out.println(sqlStr);
-                stmt.execute(sqlStr);
-                return ok(index.render());
+                stmt2 = conn.createStatement();
+
+                ResultSet resp = stmt.executeQuery("select * from books where id="+id+";");
+                if(resp.next()==false){
+                    return ok(views.html.error.render("Sorry, it looks like someone bought the book a few seconds before you did."));
+                }else{
+                    sqlStr = "delete from books where id = " + id + ";";
+                    System.out.println(sqlStr);
+                    stmt2.execute(sqlStr);
+                    return redirectHome(1);
+                }
             
             }catch (SQLException k) {
                 k.printStackTrace();
@@ -395,7 +411,7 @@ public class Application extends Controller {
                 k.printStackTrace();
 	            return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
 	        }
-		    return ok(index.render());
+		    return redirectHome(2);
 		}
     }
 }

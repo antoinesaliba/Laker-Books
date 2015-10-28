@@ -1,9 +1,11 @@
+@(action: Integer)
+
 <!DOCTYPE>
 <html>
     <header>
         <title>Laker Books</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/index.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="/public/stylesheets/home.css">
         <script type="text/javascript" src="/public/javascripts/jquery-2.1.4.js"></script>
         <script type="text/javascript">
             jQuery('body').css('display','none');
@@ -29,6 +31,17 @@
         </script>
     </header>
     <body>
+        @if(action>0){
+            <div class="alert alert-success" id="success-alert" style="position:absolute; width: 30%; left: 35%; text-align:center;">
+                <strong>Success! </strong>
+                @if(action==1){
+                    You have purchased the textbook.
+                }else{
+                    You have posted your textbook online.
+                }
+            </div>
+        }
+
         <div id="how"><a href="#basicModal" data-toggle="modal">How It Works</a></div>
         <div id="basicModal" class="modal fade">
             <div class="modal-dialog">
@@ -93,5 +106,9 @@
                 </div>
             </div>
         </div>
+        <script type="text/javascript">
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+            $("#success-alert").alert('close');
+        });</script>
     </body>
 </html>

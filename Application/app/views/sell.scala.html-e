@@ -37,7 +37,7 @@
                                         <p class="entered">ISBN-10: @newbook.isbn10</p>
                                     </div>
                                     <div class="col-xs-9 form-group">
-                                        <label for="email">Oswego Email</label>
+                                        <label for="email">Oswego Email Address:</label>
                                         @if(email){
                                             <input style="border: solid; border-color: red;" type="email" class="form-control" name="email"></input>
                                         }else{ @if(newbook.seller==""||newbook.seller==null){
@@ -47,6 +47,7 @@
                                         }}
                                     </div>
                                     <div class="col-xs-12" style="margin-bottom: 3%;">
+                                        <label for="optradio">Condition:   </label>
                                         @if(condition){
                                             <label class="radio-inline"><input type="radio" name="optradio" style="outline: 1px solid red;" value="new">New</label>
                                             <label class="radio-inline"><input type="radio" name="optradio" style="outline: 1px solid red;" value="used">Used</label>
