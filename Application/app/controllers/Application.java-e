@@ -24,7 +24,7 @@ import java.net.MalformedURLException;
 public class Application extends Controller {
 
     public Result index() {
-        return ok(index.render());
+        return redirect(routes.Application.home(0));
     }
 
     public Result home(int action) {

@@ -10,15 +10,15 @@
         <script type="text/javascript">
             jQuery('body').css('display','none');
             jQuery(document).ready(function() {
-		      jQuery('body').fadeIn();
-		      jQuery('#buy').on('click',function(event){
-			     var thetarget = this.getAttribute('target')
-			     if (thetarget != "_blank"){			
-				    event.preventDefault();
-				    jQuery('#content').fadeOut(500);
+              jQuery('body').fadeIn();
+              jQuery('#buy').on('click',function(event){
+                 var thetarget = this.getAttribute('target')
+                 if (thetarget != "_blank"){            
+                    event.preventDefault();
+                    jQuery('#content').fadeOut(500);
                     jQuery('#search').fadeIn(2000);
-			     }
-		      })
+                 }
+              })
               jQuery('#sell').on('click',function(event){
                  var thetarget = this.getAttribute('target')
                  if (thetarget != "_blank"){            
@@ -27,7 +27,7 @@
                     jQuery('#sellItem').fadeIn(2000);
                  }     
               });
-	       });
+           });
         </script>
     </header>
     <body>
