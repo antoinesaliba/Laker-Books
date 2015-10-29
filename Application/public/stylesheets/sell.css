@@ -18,6 +18,17 @@ body {
     margin-top: 5%;
 }
 
+#how{
+    position:absolute;
+    color: white;
+    font-size: 4vmin;
+    font-family:  Exo;
+    right:0px;
+    margin-top: 1%;
+    margin-right: 1%;
+    text-decoration: none;
+}
+
 a:link {
     color: white;
     text-decoration: none;
