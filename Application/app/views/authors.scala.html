@@ -36,14 +36,14 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="logo" style="margin-left:1%; margin-top:1%;"><a href="http://localhost:9000">Laker Books</a></div>
         <div id="content">
             <div class="buttons">
                 <form action='@routes.Application.sellTitle()' method="GET">
                 @if(author){
-                    <p style="width:100%; font-size:22px; outline: 1px solid red;">Please enter one of the authors of the textbook:   
-                        <input name=author></input>
+                    <p style="width:100%; font-size:22px;">Please enter one of the authors of the textbook:   
+                        <input name=author style="border: solid; border-color: red;"></input>
                     </p>
                 }else{
                     <p style="width:100%; font-size:22px;">Please enter one of the authors of the textbook:   

@@ -82,35 +82,35 @@ public class Application extends Controller {
     public Result buyTitle(){
     	Connection conn = null;
         Statement stmt = null;
+        String sqlStr = null;
     	String title = session("title");
     	String edition = Form.form().bindFromRequest().get("edition");
 		ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
 		if(edition==null||edition.equals("")){
-			return ok(views.html.editionbuy.render(true));
+            sqlStr = "select * from books where title like '%" + title + "%' and buyer is NULL;";
 		}else{
-	    	String sqlStr = "select * from books where title like " + "'%" + title + "%' and edition =" + "'" + edition + "'and buyer is NULL;";
-
-	    	try{
-	    		conn = DriverManager.getConnection(
-	                       "jdbc:mysql://localhost:3306/lakerbooks", "root", "password"); // Opens connection with mysql database
+	    	sqlStr = "select * from books where title like " + "'%" + title + "%' and edition =" + "'" + edition + "'and buyer is NULL;";
+        }
+	    try{
+            System.out.println(sqlStr);
+	   		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/lakerbooks", "root", "password"); // Opens connection with mysql database
 	            
-	            stmt = conn.createStatement();
+	        stmt = conn.createStatement();
 	            
-	    		ResultSet resp = stmt.executeQuery(sqlStr);
-	            if(resp.next()==false){
-	                return ok(views.html.error.render("Sorry, no one is selling the specified textbook on Laker Books. Please try again at a later time."));
-	            }else{
-	                do{
-	                   bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller"), resp.getString("buyer"), resp.getString("imageURL")));
-	                } while(resp.next()!=false);
-	            }
-	    	}catch (SQLException k) {
-	            k.printStackTrace();
-	            return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+	    	ResultSet resp = stmt.executeQuery(sqlStr);
+	        if(resp.next()==false){
+                return ok(views.html.error.render("Sorry, no one is selling the specified textbook on Laker Books. Please try again at a later time."));
+	        }else{
+	            do{
+	               bookresults.add(new bookObject(resp.getLong("id"),resp.getString("title"), resp.getString("authors"), resp.getString("edition"), resp.getString("isbn13"), resp.getString("isbn10"), resp.getString("state"), resp.getInt("price"), resp.getString("seller"), resp.getString("buyer"), resp.getString("imageURL")));
+	            } while(resp.next()!=false);
 	        }
-	        return ok(views.html.results.render(bookresults));
+	    }catch (SQLException k) {
+	        k.printStackTrace();
+	        return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
 	    }
+	    return ok(views.html.results.render(bookresults));
     }
 
     public Result confirm(){
@@ -258,15 +258,17 @@ public class Application extends Controller {
         ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
         if(edition==null||edition.equals("")){
-        	if(!session("auth").equals("yes")){
+        	if(session("auth")!=null&& !session("auth").equals("yes")){
             	return ok(views.html.edition.render(true));
             }else{
-            	if(auth==null||auth.equals("")){
-            		return ok(views.html.authors.render(true));
-            	}else{
-            		edition = session("edition");
-            		session("auth","no");
-            	}
+                return ok(views.html.edition.render(true));
+            }
+        }else{
+            if(auth==null||auth.equals("")){
+            	return ok(views.html.authors.render(true));
+            }else{
+            	edition = session("edition");
+            	session("auth","no");
             }
         }
             try{
