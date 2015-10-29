@@ -121,12 +121,13 @@ public class Application extends Controller {
     public Result sold(){
         String email = Form.form().bindFromRequest().get("email");
         String id = session("id");
-        if(email==null||email.equals(""))
+        if(email==null||email.equals("")||!email.contains("@oswego.edu"))
             return ok(views.html.confirm.render(true));
         else{
             Connection conn = null;
             Statement stmt = null;
             Statement stmt2 = null;
+            Statement stmt3 = null;
             String sqlStr = null;
 
             try{
@@ -136,13 +137,24 @@ public class Application extends Controller {
             
                 stmt = conn.createStatement();
                 stmt2 = conn.createStatement();
+                stmt3 = conn.createStatement();
 
                 ResultSet resp = stmt.executeQuery("select * from books where id="+id+";");
                 if(resp.next()==false){
                     return ok(views.html.error.render("Sorry, it looks like someone bought the book a few seconds before you did."));
                 }else{
-                    sqlStr = "delete from books where id = " + id + ";";
-                    System.out.println(sqlStr);
+
+                    String checkUser = "select * from users where email =" + "'" + email + "'" + ";"; //looks inside database to see if anything matches search bar input
+                    ResultSet resp2 = stmt3.executeQuery(checkUser);
+                    if(resp2.next()==false){
+                        String newUser = "insert into users (email, name, up, down) values (?,?,0,0)";
+                        PreparedStatement user = conn.prepareStatement(newUser);
+                        user.setString(1, email);
+                        user.setString(2, "Bob");
+                        user.execute();
+                    }
+
+                    sqlStr = "update books set buyer = '"+email+"' where id = " + id + ";";
                     stmt2.execute(sqlStr);
                     return redirectHome(1);
                 }
