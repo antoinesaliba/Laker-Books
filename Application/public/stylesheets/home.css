@@ -11,15 +11,16 @@ body {
 #logo{
     position:absolute;
     color: white;
-    font-size: 4vmin;
+    font-size: 3vmin;
     font-family:  Exo;
     text-decoration: none;
+    margin-top: 1%;
 }
 
 #how{
     position:absolute;
     color: white;
-    font-size: 4vmin;
+    font-size: 3vmin;
     font-family:  Exo;
     right:0px;
     margin-top: 1%;

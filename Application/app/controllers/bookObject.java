@@ -1,4 +1,5 @@
 package controllers;
+import java.math.*;
 
 public class bookObject{
 
@@ -9,13 +10,13 @@ public class bookObject{
     public String authors;
     public String edition;
     public String state;
-    public int price;
+    public BigDecimal price;
     public String seller;
     public String buyer;
     public String imageURL;
 
 
-    public bookObject(long id, String title, String authors, String edition, String isbn13, String isbn10, String state, int price, String seller, String buyer, String imageURL){
+    public bookObject(long id, String title, String authors, String edition, String isbn13, String isbn10, String state, BigDecimal price, String seller, String buyer, String imageURL){
         this.id=id;
         this.title=title;
         this.authors=authors;
