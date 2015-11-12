@@ -11,7 +11,8 @@ body {
 #logo{
     position:relative;
     color: white;
-    font-size: 2em;
+    font-size: 3vmin;
+    margin-top: 1%;
     font-family:  Exo;
     text-decoration: none;
 }
@@ -19,7 +20,7 @@ body {
 #how{
     position:absolute;
     color: white;
-    font-size: 4vmin;
+    font-size: 3vmin;
     font-family:  Exo;
     right:0px;
     margin-top: 1%;

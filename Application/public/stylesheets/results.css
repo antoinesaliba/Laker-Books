@@ -12,18 +12,19 @@ body {
 #logo{
     position:relative;
     color: white;
-    font-size: 2em;
+    font-size: 3vmin;
     font-family:  Exo;
     text-decoration: none;
+    margin-top: 1%;
 }
 
 #how{
     position:absolute;
     color: white;
-    font-size: 4vmin;
+    font-size: 3vmin;
     font-family:  Exo;
     right:0px;
-    margin-top: 1%;
+    margin-top: 0%;
     margin-right: 1%;
     text-decoration: none;
 }
