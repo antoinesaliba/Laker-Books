@@ -146,7 +146,7 @@ public class Application extends Controller {
 
 
         String id = session("id");
-        if (email == null || email.equals("") || !email.contains("@oswego.edu") || row==0)
+        if (email == null || email.equals("") || !email.contains("@oswego.edu") || row == 0)
             return ok(views.html.confirm.render(true));
         else {
             Connection conn = null;
@@ -175,8 +175,12 @@ public class Application extends Controller {
                         String newUser = "insert into users (email, name, up, down) values (?,?,0,0)";
                         PreparedStatement user = conn.prepareStatement(newUser);
                         user.setString(1, email);
-                        user.setString(2, "Bob");
+                        user.setString(2, "User");
                         user.execute();
+                    } else {
+                        if (resp.getInt("down") == 1) {
+                            return ok(views.html.error.render("Unfortunately, it looks like someone has reported you for misconduct and you have been banned from using this site."));
+                        }
                     }
 
                     sqlStr = "update books set buyer = '" + email + "' where id = " + id + ";";
@@ -450,8 +454,12 @@ public class Application extends Controller {
                     String newUser = "insert into users (email, name, up, down) values (?,?,0,0)";
                     PreparedStatement user = conn.prepareStatement(newUser);
                     user.setString(1, seller_email);
-                    user.setString(2, "Bob");
+                    user.setString(2, "User");
                     user.execute();
+                } else {
+                    if (resp.getInt("down") == 1) {
+                        return ok(views.html.error.render("Unfortunately, it looks like someone has reported you for misconduct and you have been banned from using this site."));
+                    }
                 }
 
 
@@ -468,7 +476,7 @@ public class Application extends Controller {
                 comm.setString(9, seller_email);
                 comm.setString(10, null);
                 comm.setString(11, image);
-                //comm.execute();
+                comm.execute();
             } catch (SQLException k) {
                 k.printStackTrace();
                 return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
@@ -478,10 +486,6 @@ public class Application extends Controller {
     }
 
     private static int findEmail(HSSFSheet sheet, String email) {
-        /*
-         *  This is the method to find the row number
-         */
-
         int rowNum = 0;
 
         for (Row row : sheet) {
@@ -493,5 +497,35 @@ public class Application extends Controller {
             }
         }
         return rowNum;
+    }
+
+    public Result report() {
+        String youremail = Form.form().bindFromRequest().get("yours");
+        String hisemail = Form.form().bindFromRequest().get("his");
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = DriverManager.getConnection(
+                       "jdbc:mysql://localhost:3306/lakerbooks", "root", "262863436232"); // Opens connection with mysql database
+
+            stmt = conn.createStatement();
+
+            String checkUser = "select * from books where seller =" + "'" + hisemail + "'" + "and buyer =" + "'" + youremail + "';"; //looks inside database to see if anything matches search bar input
+            ResultSet resp = stmt.executeQuery(checkUser);
+            if (resp.next() == false) {
+                String checkOther = "select * from books where seller =" + "'" + youremail + "'" + "and buyer =" + "'" + hisemail + "';";
+                ResultSet resp2 = stmt.executeQuery(checkUser);
+                if (resp2.next() != false) {
+                    //sendEmail();
+                }
+            } else {
+                //sendEmail();
+            }
+        } catch (SQLException k) {
+            k.printStackTrace();
+            return ok(views.html.error.render("Unfortunately, an error has occured. Sorry for the inconveniance, please try again."));
+        }
+
+        return redirectHome(0);
     }
 }
