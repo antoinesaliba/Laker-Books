@@ -29,6 +29,25 @@ body {
     text-decoration: none;
 }
 
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px;
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
 a:link {
     color: white;
     text-decoration: none;
@@ -50,6 +69,10 @@ a:hover {
 a:active {
     color: white;
     text-decoration: none;
+}
+
+a:focus{
+    outline:0;
 }
 
 #results {

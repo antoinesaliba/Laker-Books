@@ -29,5 +29,8 @@ GET     /selltitle                    controllers.Application.sellTitle()
 # Post book on website
 GET     /postitem                  controllers.Application.postItem()
 
+# Post book on website
+GET     /report                  controllers.Application.report()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /public/*file               controllers.Assets.versioned(path="/public", file: Asset)
