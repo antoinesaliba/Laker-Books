@@ -29,4 +29,8 @@ public class bookObject{
         this.buyer=buyer;
         this.imageURL=imageURL;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 40c62623dfa2b538e911082383ecffc40cde4b78

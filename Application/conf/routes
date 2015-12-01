@@ -33,4 +33,8 @@ GET     /postitem                  controllers.Application.postItem()
 GET     /report                  controllers.Application.report()
 
 # Map static resources from the /public folder to the /assets URL path
+<<<<<<< HEAD
 GET     /public/*file               controllers.Assets.versioned(path="/public", file: Asset)
+=======
+GET     /public/*file               controllers.Assets.versioned(path="/public", file: Asset)
+>>>>>>> 40c62623dfa2b538e911082383ecffc40cde4b78
