@@ -4,10 +4,8 @@ import play.*;
 import play.mvc.*;
 import play.data.Form;
 import play.api.db.*;
-
 import java.sql.*;
 import java.util.*;
-
 import views.html.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.DocumentBuilder;
@@ -26,8 +24,19 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 public class Application extends Controller {
+    static Properties mailServerProperties;
+    static Session getMailSession;
+    static MimeMessage generateMailMessage;
 
     public Result index() {
         return redirect(routes.Application.home(0));
@@ -51,9 +60,9 @@ public class Application extends Controller {
         input = Form.form().bindFromRequest().get("input");
 
         try {
-
+            parse();
             conn = DriverManager.getConnection(
-                       "jdbc:mysql://localhost:3306/lakerbooks", "root", "262863436232"); // Opens connection with mysql database
+                       session("1"), session("2"), session("3")); // Opens connection with mysql database
 
             stmt = conn.createStatement();
 
@@ -99,8 +108,8 @@ public class Application extends Controller {
             sqlStr = "select * from books where title like " + "'%" + title + "%' and edition =" + "'" + edition + "'and buyer is NULL;";
         }
         try {
-            System.out.println(sqlStr);
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/lakerbooks", "root", "262863436232"); // Opens connection with mysql database
+            parse();
+            conn = DriverManager.getConnection(session("1"), session("2"), session("3")); // Opens connection with mysql database
 
             stmt = conn.createStatement();
 
@@ -156,9 +165,9 @@ public class Application extends Controller {
             String sqlStr = null;
 
             try {
-
+                parse();
                 conn = DriverManager.getConnection(
-                           "jdbc:mysql://localhost:3306/lakerbooks", "root", "262863436232"); // Opens connection with mysql database
+                           session("1"), session("2"), session("3")); // Opens connection with mysql database
 
                 stmt = conn.createStatement();
                 stmt2 = conn.createStatement();
@@ -443,8 +452,9 @@ public class Application extends Controller {
         } else {
 
             try {
+                parse();
                 conn = DriverManager.getConnection(
-                           "jdbc:mysql://localhost:3306/lakerbooks", "root", "262863436232"); // Opens connection with mysql database
+                           session("1"), session("2"), session("3")); // Opens connection with mysql database
 
                 stmt = conn.createStatement();
 
@@ -499,14 +509,46 @@ public class Application extends Controller {
         return rowNum;
     }
 
+    private void parse() {
+        String fileName = "/Users/antoinesaliba/Documents/temp.txt";
+        String line = null;
+        ArrayList<String>inf = new ArrayList<String>();
+        if (session("1") != null)
+            return;
+        else {
+            try {
+                FileReader fileReader = new FileReader(fileName);
+
+                BufferedReader bufferedReader =
+                    new BufferedReader(fileReader);
+                session("1", bufferedReader.readLine());
+                session("2", bufferedReader.readLine());
+                session("3", bufferedReader.readLine());
+                session("4", bufferedReader.readLine());
+                session("5", bufferedReader.readLine());
+                bufferedReader.close();
+            } catch (FileNotFoundException ex) {
+                System.out.println(
+                    "Unable to open file '" +
+                    fileName + "'");
+            } catch (IOException ex) {
+                System.out.println(
+                    "Error reading file '"
+                    + fileName + "'");
+            }
+        }
+    }
+
     public Result report() {
         String youremail = Form.form().bindFromRequest().get("yours");
         String hisemail = Form.form().bindFromRequest().get("his");
+        String explanation = Form.form().bindFromRequest().get("reason");
         Connection conn = null;
         Statement stmt = null;
         try {
+            parse();
             conn = DriverManager.getConnection(
-                       "jdbc:mysql://localhost:3306/lakerbooks", "root", "262863436232"); // Opens connection with mysql database
+                       session("1"), session("2"), session("3")); // Opens connection with mysql database
 
             stmt = conn.createStatement();
 
@@ -516,10 +558,10 @@ public class Application extends Controller {
                 String checkOther = "select * from books where seller =" + "'" + youremail + "'" + "and buyer =" + "'" + hisemail + "';";
                 ResultSet resp2 = stmt.executeQuery(checkUser);
                 if (resp2.next() != false) {
-                    //sendEmail();
+                    sendReport(youremail, hisemail, explanation);
                 }
             } else {
-                //sendEmail();
+                sendReport(youremail, hisemail, explanation);
             }
         } catch (SQLException k) {
             k.printStackTrace();
@@ -527,5 +569,64 @@ public class Application extends Controller {
         }
 
         return redirectHome(0);
+    }
+
+    private void sendReport(String yours, String his, String explanation) {
+        try {
+            parse();
+            mailServerProperties = System.getProperties();
+            mailServerProperties.put("mail.smtp.port", "587");
+            mailServerProperties.put("mail.smtp.auth", "true");
+            mailServerProperties.put("mail.smtp.starttls.enable", "true");
+
+            getMailSession = Session.getDefaultInstance(mailServerProperties, null);
+            generateMailMessage = new MimeMessage(getMailSession);
+            generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(session("4")));
+            generateMailMessage.setSubject("Reported User");
+            String emailBody = yours + " has reported user " + his + ".\nHere is the explanation:\n" + explanation;
+            generateMailMessage.setContent(emailBody, "text/html");
+
+            Transport transport = getMailSession.getTransport("smtp");
+
+            transport.connect("smtp.gmail.com", session("4"), session("5"));
+            transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
+            transport.close();
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException f) {
+            f.printStackTrace();
+        }
+    }
+
+    private void sendMail(String to) {
+        try {
+            parse();
+            System.out.println("\n 1st ===> setup Mail Server Properties..");
+            mailServerProperties = System.getProperties();
+            mailServerProperties.put("mail.smtp.port", "587");
+            mailServerProperties.put("mail.smtp.auth", "true");
+            mailServerProperties.put("mail.smtp.starttls.enable", "true");
+            System.out.println("Mail Server Properties have been setup successfully..");
+
+            System.out.println("\n\n 2nd ===> get Mail Session..");
+            getMailSession = Session.getDefaultInstance(mailServerProperties, null);
+            generateMailMessage = new MimeMessage(getMailSession);
+            generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            generateMailMessage.setSubject("Greetings from Crunchify..");
+            String emailBody = "Test email by Crunchify.com JavaMail API example. " + "<br><br> Regards, <br>Crunchify Admin";
+            generateMailMessage.setContent(emailBody, "text/html");
+            System.out.println("Mail Session has been created successfully..");
+
+            System.out.println("\n\n 3rd ===> Get Session and Send mail");
+            Transport transport = getMailSession.getTransport("smtp");
+
+            transport.connect("smtp.gmail.com", session("4"), session("5"));
+            transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
+            transport.close();
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException f) {
+            f.printStackTrace();
+        }
     }
 }
