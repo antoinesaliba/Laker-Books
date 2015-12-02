@@ -134,7 +134,7 @@ public class Application extends Controller {
     }
 
     public Result sold() {
-        String email = Form.form().bindFromRequest().get("email");
+        String email = Form.form().bindFromRequest().get("email").toLowerCase();
         String fileName = "/Users/antoinesaliba/Downloads/Oswego_Contacts.xls";
         int rownr = 0, colnr = 0;
         int row = 0;
@@ -177,8 +177,7 @@ public class Application extends Controller {
                 if (resp.next() == false) {
                     return ok(views.html.error.render("Sorry, it looks like someone bought the book a few seconds before you did."));
                 } else {
-
-                    String checkUser = "select * from users where email =" + "'" + email + "'" + ";"; //looks inside database to see if anything matches search bar input
+                    String checkUser = "select * from users where email =" + "'" + email+ "'" + ";"; //looks inside database to see if anything matches search bar input
                     ResultSet resp2 = stmt3.executeQuery(checkUser);
                     if (resp2.next() == false) {
                         String newUser = "insert into users (email, name, up, down) values (?,?,0,0)";
@@ -187,13 +186,14 @@ public class Application extends Controller {
                         user.setString(2, "User");
                         user.execute();
                     } else {
-                        if (resp.getInt("down") == 1) {
+                        if (resp2.getInt("down") == 1) {
                             return ok(views.html.error.render("Unfortunately, it looks like someone has reported you for misconduct and you have been banned from using this site."));
                         }
                     }
 
                     sqlStr = "update books set buyer = '" + email + "' where id = " + id + ";";
                     stmt2.execute(sqlStr);
+                    sendMail(resp.getString("seller"),email,resp.getString("title"),resp.getBigDecimal("price"));
                     return redirectHome(1);
                 }
 
@@ -212,19 +212,19 @@ public class Application extends Controller {
 
         input = Form.form().bindFromRequest().get("input");
         String temp = input.replaceAll("-", ""); //Removes dashes from input and checks to see if ISBN, if not string input is still intact
-
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
             if (temp.matches("[0-9]+")) { //checks to see if user entered ISBN or Title
                 if (temp.length() == 10)
-                    apiRequest = "http://www.directtextbook.com/xml_buyback.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&isbn=" + temp;
+                    apiRequest = "http://www.directtextbook.com/xml.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&isbn=" + temp;
                 else if (temp.length() == 13)
-                    apiRequest = "http://www.directtextbook.com/xml_buyback.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&ean=" + temp;
+                    apiRequest = "http://www.directtextbook.com/xml.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&ean=" + temp;
                 else
                     return ok(views.html.error.render("No information found for the textbook you entered. Please try again."));
+                System.out.println(apiRequest);
                 Document doc = dBuilder.parse(new URL(apiRequest).openStream());
+                System.out.println(apiRequest);
                 doc.getDocumentElement().normalize();
                 NodeList nList = doc.getElementsByTagName("book");
 
@@ -249,8 +249,9 @@ public class Application extends Controller {
                         authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
                         authors = authors.replaceAll(";", " & "); //make the output of the authors more readable
 
-                        edition = eElement.getElementsByTagName("edition").item(0).getTextContent().trim();
-                        if (edition.equals("0")) //if edition is 0, make it display N/A instead
+                        if(eElement.getElementsByTagName("edition").item(0)!=null)
+                            edition = eElement.getElementsByTagName("edition").item(0).getTextContent().trim();
+                        else
                             edition = "N/A";
 
                         isbn10 = eElement.getElementsByTagName("isbn").item(0).getTextContent().trim();
@@ -289,32 +290,31 @@ public class Application extends Controller {
     }
 
     public Result sellTitle() {
-        String edition = Form.form().bindFromRequest().get("edition");
-        String auth = Form.form().bindFromRequest().get("author");
+        String edition=Form.form().bindFromRequest().get("edition");
+        String auth=Form.form().bindFromRequest().get("author");
+        String which = Form.form().bindFromRequest().get("which");
+
         String title = session("title");
         String apiRequest = null;
         ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
-        if (edition == null || edition.equals("")) {
-            if (session("auth") != null && !session("auth").equals("yes")) {
-                return ok(views.html.edition.render(true));
-            } else {
-                return ok(views.html.edition.render(true));
-            }
-        } else {
-            if (auth == null || auth.equals("")) {
+        if(which.equals("yes")){
+            if(auth==null||auth.equals(""))
                 return ok(views.html.authors.render(true));
-            } else {
+            else
                 edition = session("edition");
-                session("auth", "no");
-            }
+        }else{
+            if(edition==null||edition.equals(""))
+                return ok(views.html.edition.render(true));
         }
+
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
-            apiRequest = "http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&amp;query=" + title.replace(" ", "%20");
+            apiRequest = "http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&query=" + title.replace(" ", "%20");
             Document doc = dBuilder.parse(new URL(apiRequest).openStream());
+            System.out.println(apiRequest);
             doc.getDocumentElement().normalize();
             NodeList nList = doc.getElementsByTagName("results");
 
@@ -333,7 +333,8 @@ public class Application extends Controller {
                     Node temp = books.item(i);
                     if (temp.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElement = (Element) temp;
-                        if (eElement.getElementsByTagName("title").item(0).getTextContent().trim().equals(title) && eElement.getElementsByTagName("edition").item(0).getTextContent().trim().equals(edition)) {
+                        if (eElement.getElementsByTagName("title").item(0).getTextContent().trim().toLowerCase().contains(title.toLowerCase()) && eElement.getElementsByTagName("edition").item(0)!=null && eElement.getElementsByTagName("edition").item(0).getTextContent().trim().equals(edition)) {
+                            title=eElement.getElementsByTagName("title").item(0).getTextContent().trim();
                             authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
                             authors = authors.replaceAll(";", " & "); //make the output of the authors more readable
 
@@ -344,13 +345,13 @@ public class Application extends Controller {
 
                             bookObject newbook = new bookObject(0, title, authors, edition, isbn13, isbn10, null, new BigDecimal(0.00), null, null, image);
                             bookresults.add(newbook);
-
-
-                            return ok(views.html.sell.render(newbook, false, false, false));
                         }
 
                     }
                 }
+                System.out.println(bookresults.size());
+                if(bookresults.size()==0)
+                    return ok(views.html.error.render("No information found for the textbook you entered. Please try again."));
                 if (bookresults.size() == 1) {
                     session("title", title);
                     session("authors", authors);
@@ -361,7 +362,7 @@ public class Application extends Controller {
                     return ok(views.html.sell.render(bookresults.get(0), false, false, false));
                 } else if (auth != null && !auth.equals("")) {
                     for (int b = 0; b < bookresults.size(); b++) {
-                        if (bookresults.get(b).authors.contains(auth)) {
+                        if (bookresults.get(b).authors.toLowerCase().contains(auth.toLowerCase())) {
                             bookObject temp = bookresults.get(b);
                             session("title", temp.title);
                             session("authors", temp.authors);
@@ -373,7 +374,6 @@ public class Application extends Controller {
                         }
                     }
                 } else {
-                    session("auth", "yes");
                     session("edition", edition);
                     return ok(views.html.authors.render(false));
                 }
@@ -414,7 +414,7 @@ public class Application extends Controller {
         if (!Form.form().bindFromRequest().get("price").equals(""))
             price = new BigDecimal(Form.form().bindFromRequest().get("price"));
 
-        String seller_email = Form.form().bindFromRequest().get("email");
+        String seller_email = Form.form().bindFromRequest().get("email").toLowerCase();
 
         String fileName = "/Users/antoinesaliba/Downloads/Oswego_Contacts.xls";
         int rownr = 0, colnr = 0;
@@ -598,26 +598,21 @@ public class Application extends Controller {
         }
     }
 
-    private void sendMail(String to) {
+    private void sendMail(String seller, String buyer, String title, BigDecimal price) {
         try {
             parse();
-            System.out.println("\n 1st ===> setup Mail Server Properties..");
             mailServerProperties = System.getProperties();
             mailServerProperties.put("mail.smtp.port", "587");
             mailServerProperties.put("mail.smtp.auth", "true");
             mailServerProperties.put("mail.smtp.starttls.enable", "true");
-            System.out.println("Mail Server Properties have been setup successfully..");
 
-            System.out.println("\n\n 2nd ===> get Mail Session..");
             getMailSession = Session.getDefaultInstance(mailServerProperties, null);
             generateMailMessage = new MimeMessage(getMailSession);
-            generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-            generateMailMessage.setSubject("Greetings from Crunchify..");
-            String emailBody = "Test email by Crunchify.com JavaMail API example. " + "<br><br> Regards, <br>Crunchify Admin";
+            generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(seller));
+            generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(buyer));
+            generateMailMessage.setSubject("LakerBooks Buyer and Seller Match Found");
+            String emailBody = "Hello "+buyer+" and "+seller+",\n Congratulations on making this transaction on LakerBooks! "+buyer+" has agreed to buy "+title+" from "+seller+" for $"+price+".\n You now have each other's emails so please agree on someplace to meet to complete the transaction.";
             generateMailMessage.setContent(emailBody, "text/html");
-            System.out.println("Mail Session has been created successfully..");
-
-            System.out.println("\n\n 3rd ===> Get Session and Send mail");
             Transport transport = getMailSession.getTransport("smtp");
 
             transport.connect("smtp.gmail.com", session("4"), session("5"));
