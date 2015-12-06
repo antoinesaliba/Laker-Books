@@ -105,6 +105,7 @@ public class Application extends Controller {
         if (edition == null || edition.equals("")) {
             sqlStr = "select * from books where title like '%" + title + "%' and buyer is NULL;";
         } else {
+            edition=edition.substring(0,1);
             sqlStr = "select * from books where title like " + "'%" + title + "%' and edition =" + "'" + edition + "'and buyer is NULL;";
         }
         try {
@@ -177,7 +178,7 @@ public class Application extends Controller {
                 if (resp.next() == false) {
                     return ok(views.html.error.render("Sorry, it looks like someone bought the book a few seconds before you did."));
                 } else {
-                    String checkUser = "select * from users where email =" + "'" + email+ "'" + ";"; //looks inside database to see if anything matches search bar input
+                    String checkUser = "select * from users where email =" + "'" + email + "'" + ";"; //looks inside database to see if anything matches search bar input
                     ResultSet resp2 = stmt3.executeQuery(checkUser);
                     if (resp2.next() == false) {
                         String newUser = "insert into users (email, name, up, down) values (?,?,0,0)";
@@ -193,7 +194,7 @@ public class Application extends Controller {
 
                     sqlStr = "update books set buyer = '" + email + "' where id = " + id + ";";
                     stmt2.execute(sqlStr);
-                    sendMail(resp.getString("seller"),email,resp.getString("title"),resp.getBigDecimal("price"));
+                    sendMail(resp.getString("seller"), email, resp.getString("title"), resp.getBigDecimal("price"));
                     return redirectHome(1);
                 }
 
@@ -222,9 +223,7 @@ public class Application extends Controller {
                     apiRequest = "http://www.directtextbook.com/xml.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&ean=" + temp;
                 else
                     return ok(views.html.error.render("No information found for the textbook you entered. Please try again."));
-                System.out.println(apiRequest);
                 Document doc = dBuilder.parse(new URL(apiRequest).openStream());
-                System.out.println(apiRequest);
                 doc.getDocumentElement().normalize();
                 NodeList nList = doc.getElementsByTagName("book");
 
@@ -249,8 +248,8 @@ public class Application extends Controller {
                         authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
                         authors = authors.replaceAll(";", " & "); //make the output of the authors more readable
 
-                        if(eElement.getElementsByTagName("edition").item(0)!=null)
-                            edition = eElement.getElementsByTagName("edition").item(0).getTextContent().trim();
+                        if (eElement.getElementsByTagName("edition").item(0) != null)
+                            edition = eElement.getElementsByTagName("edition").item(0).getTextContent().trim().substring(0,1);
                         else
                             edition = "N/A";
 
@@ -275,6 +274,7 @@ public class Application extends Controller {
 
 
             } else {
+                input = input.replaceAll("&", "and");
                 session("title", input);
                 return ok(views.html.edition.render(false));
             }
@@ -290,31 +290,36 @@ public class Application extends Controller {
     }
 
     public Result sellTitle() {
-        String edition=Form.form().bindFromRequest().get("edition");
-        String auth=Form.form().bindFromRequest().get("author");
+        String edition = Form.form().bindFromRequest().get("edition");
+        String auth = Form.form().bindFromRequest().get("author");
         String which = Form.form().bindFromRequest().get("which");
+        boolean ed = true;
 
-        String title = session("title");
+        String title = null;
+        String titler = session("title");
         String apiRequest = null;
         ArrayList<bookObject>bookresults = new ArrayList<bookObject>();
 
-        if(which.equals("yes")){
-            if(auth==null||auth.equals(""))
+        if (which.equals("yes")) {
+            if (auth == null || auth.equals(""))
                 return ok(views.html.authors.render(true));
             else
                 edition = session("edition");
-        }else{
-            if(edition==null||edition.equals(""))
-                return ok(views.html.edition.render(true));
+        } else {
+            if (edition == null || edition.equals("") || edition.equals("N/A") || edition.equals("0")) {
+                edition = "N/A";
+                ed = false;
+            }else{
+                edition=edition.substring(0,1);
+            }
         }
 
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-            apiRequest = "http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&query=" + title.replace(" ", "%20");
-            Document doc = dBuilder.parse(new URL(apiRequest).openStream());
+            apiRequest = "http://www.directtextbook.com/xml_search.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&query=" + titler.replace(" ", "%20");
             System.out.println(apiRequest);
+            Document doc = dBuilder.parse(new URL(apiRequest).openStream());
             doc.getDocumentElement().normalize();
             NodeList nList = doc.getElementsByTagName("results");
 
@@ -333,24 +338,38 @@ public class Application extends Controller {
                     Node temp = books.item(i);
                     if (temp.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElement = (Element) temp;
-                        if (eElement.getElementsByTagName("title").item(0).getTextContent().trim().toLowerCase().contains(title.toLowerCase()) && eElement.getElementsByTagName("edition").item(0)!=null && eElement.getElementsByTagName("edition").item(0).getTextContent().trim().equals(edition)) {
-                            title=eElement.getElementsByTagName("title").item(0).getTextContent().trim();
-                            authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
-                            authors = authors.replaceAll(";", " & "); //make the output of the authors more readable
+                        if (eElement.getElementsByTagName("title").item(0).getTextContent().trim().toLowerCase().contains(titler.toLowerCase())) {
+                            if (eElement.getElementsByTagName("format").item(0)!=null&&!eElement.getElementsByTagName("format").item(0).getTextContent().trim().toLowerCase().contains("code") && !eElement.getElementsByTagName("format").item(0).getTextContent().trim().toLowerCase().equals("ebook")) {
+                                if (ed && eElement.getElementsByTagName("edition").item(0) != null && eElement.getElementsByTagName("edition").item(0).getTextContent().trim().equals(edition)) {
+                                    title = eElement.getElementsByTagName("title").item(0).getTextContent().trim();
+                                    authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
+                                    authors = authors.replaceAll(";", " & "); //make the output of the authors more readable
+                                    isbn10 = eElement.getElementsByTagName("isbn").item(0).getTextContent().trim();
+                                    isbn13 = eElement.getElementsByTagName("ean").item(0).getTextContent().trim();
 
-                            isbn10 = eElement.getElementsByTagName("isbn").item(0).getTextContent().trim();
-                            isbn13 = eElement.getElementsByTagName("ean").item(0).getTextContent().trim();
+                                    image = "http://www.directtextbook.com/large/" + isbn10 + ".jpg";
 
-                            image = "http://www.directtextbook.com/large/" + isbn10 + ".jpg";
+                                    bookObject newbook = new bookObject(0, title, authors, edition, isbn13, isbn10, null, new BigDecimal(0.00), null, null, image);
+                                    bookresults.add(newbook);
+                                } else if (!ed) {
+                                    title = eElement.getElementsByTagName("title").item(0).getTextContent().trim();
+                                    authors = eElement.getElementsByTagName("author").item(0).getTextContent().trim();
+                                    authors = authors.replaceAll(";", " & "); //make the output of the authors more readable
 
-                            bookObject newbook = new bookObject(0, title, authors, edition, isbn13, isbn10, null, new BigDecimal(0.00), null, null, image);
-                            bookresults.add(newbook);
+                                    isbn10 = eElement.getElementsByTagName("isbn").item(0).getTextContent().trim();
+                                    isbn13 = eElement.getElementsByTagName("ean").item(0).getTextContent().trim();
+
+                                    image = "http://www.directtextbook.com/large/" + isbn10 + ".jpg";
+
+                                    bookObject newbook = new bookObject(0, title, authors, edition, isbn13, isbn10, null, new BigDecimal(0.00), null, null, image);
+                                    bookresults.add(newbook);
+                                }
+                            }
                         }
 
                     }
                 }
-                System.out.println(bookresults.size());
-                if(bookresults.size()==0)
+                if (bookresults.size() == 0)
                     return ok(views.html.error.render("No information found for the textbook you entered. Please try again."));
                 if (bookresults.size() == 1) {
                     session("title", title);
@@ -424,10 +443,8 @@ public class Application extends Controller {
 
             HSSFWorkbook wb = new HSSFWorkbook(input);
             HSSFSheet sheet = wb.getSheetAt(0);
-            System.out.println(seller_email);
 
             row = findEmail(sheet, seller_email);
-            System.out.println(row);
 
         } catch (FileNotFoundException b) {
             b.printStackTrace();
@@ -501,7 +518,6 @@ public class Application extends Controller {
         for (Row row : sheet) {
             Cell cell = row.getCell(0);
             if (cell.getRichStringCellValue().getString().equals(email)) {
-                System.out.println(cell.getRichStringCellValue().getString().equals(email));
                 rowNum = row.getRowNum();
                 return rowNum;
             }
@@ -528,13 +544,9 @@ public class Application extends Controller {
                 session("5", bufferedReader.readLine());
                 bufferedReader.close();
             } catch (FileNotFoundException ex) {
-                System.out.println(
-                    "Unable to open file '" +
-                    fileName + "'");
+                ex.printStackTrace();
             } catch (IOException ex) {
-                System.out.println(
-                    "Error reading file '"
-                    + fileName + "'");
+                ex.printStackTrace();
             }
         }
     }
@@ -611,7 +623,7 @@ public class Application extends Controller {
             generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(seller));
             generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(buyer));
             generateMailMessage.setSubject("LakerBooks Buyer and Seller Match Found");
-            String emailBody = "Hello "+buyer+" and "+seller+",\n Congratulations on making this transaction on LakerBooks! "+buyer+" has agreed to buy "+title+" from "+seller+" for $"+price+".\n You now have each other's emails so please agree on someplace to meet to complete the transaction.";
+            String emailBody = "Hello " + buyer + " and " + seller + ",\n Congratulations on making this transaction on LakerBooks! " + buyer + " has agreed to buy " + title + " from " + seller + " for $" + price + ".\n You now have each other's emails so please agree on someplace to meet to complete the transaction.";
             generateMailMessage.setContent(emailBody, "text/html");
             Transport transport = getMailSession.getTransport("smtp");
 

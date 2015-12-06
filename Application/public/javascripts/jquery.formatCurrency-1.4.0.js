@@ -240,9 +240,4 @@
 			return new RegExp(symbol + "|[^\\d" + settings.decimalSymbol + "-]", "g");
 		}	
 	}
-
-<<<<<<< HEAD
 })(jQuery);
-=======
-})(jQuery);
->>>>>>> 40c62623dfa2b538e911082383ecffc40cde4b78
