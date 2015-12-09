@@ -67,6 +67,7 @@ public class Application extends Controller {
             stmt = conn.createStatement();
 
             String temp = input.replaceAll("-", ""); //Removes dashes from input and checks to see if ISBN, if not string input is still intact
+            temp = temp.replace(" ","");
 
             //check to see if user entered ISBN or Title
             if (temp.matches("[0-9]+")) {
@@ -223,6 +224,7 @@ public class Application extends Controller {
                     apiRequest = "http://www.directtextbook.com/xml.php?key=14dbcbb1bb6ae2197d0e7352decd4bfd&ean=" + temp;
                 else
                     return ok(views.html.error.render("No information found for the textbook you entered. Please try again."));
+                System.out.println(apiRequest);
                 Document doc = dBuilder.parse(new URL(apiRequest).openStream());
                 doc.getDocumentElement().normalize();
                 NodeList nList = doc.getElementsByTagName("book");
@@ -380,6 +382,8 @@ public class Application extends Controller {
                     session("image", image);
                     return ok(views.html.sell.render(bookresults.get(0), false, false, false));
                 } else if (auth != null && !auth.equals("")) {
+                    int i = auth.indexOf(' ');
+                    auth = auth.substring(0,i);
                     for (int b = 0; b < bookresults.size(); b++) {
                         if (bookresults.get(b).authors.toLowerCase().contains(auth.toLowerCase())) {
                             bookObject temp = bookresults.get(b);
@@ -622,7 +626,7 @@ public class Application extends Controller {
             generateMailMessage = new MimeMessage(getMailSession);
             generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(seller));
             generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(buyer));
-            generateMailMessage.setSubject("LakerBooks Buyer and Seller Match Found");
+            generateMailMessage.setSubject("Laker Books Buyer and Seller Match Found");
             String emailBody = "Hello " + buyer + " and " + seller + ",\n Congratulations on making this transaction on LakerBooks! " + buyer + " has agreed to buy " + title + " from " + seller + " for $" + price + ".\n You now have each other's emails so please agree on someplace to meet to complete the transaction.";
             generateMailMessage.setContent(emailBody, "text/html");
             Transport transport = getMailSession.getTransport("smtp");

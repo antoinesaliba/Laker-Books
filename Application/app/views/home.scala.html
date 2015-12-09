@@ -35,11 +35,12 @@
     <body>
         @if(action>0){
             <div class="alert alert-success" id="success-alert" style="position:absolute; width: 30%; left: 35%; text-align:center;">
-                <strong>Success! </strong>
+                <strong>Success!</strong>
+                <br>
                 @if(action==1){
-                    You have purchased the textbook.
+                    You have purchased the textbook. Please check your SUNY Oswego email for instructions.
                 }else{
-                    You have posted your textbook on Laker Books.
+                    You have posted your textbook on Laker Books. You will receive an email once someone buys your textbook.
                 }
             </div>
         }
@@ -50,6 +51,8 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h3 class="modal-title"><b>How Laker Books Works</b></h3>
+                        <br>
+                        <p><b>Laker Books is designed to allow SUNY Oswego students to buy and sell textbooks amongst themselves instead of letting those old textbooks go to waste.</b></p>
                     </div>
                     <div class="modal-body">
                         <p><b>For Buyers:</b><br>
@@ -150,7 +153,7 @@
             </div>
         </div>
         <script type="text/javascript">
-        $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+        $("#success-alert").fadeTo(5000, 500).slideUp(500, function(){
             $("#success-alert").alert('close');
         });
         </script>
