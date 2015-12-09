@@ -113,11 +113,11 @@
                                     <div class="col-xs-4 input-group hide-inputbtns" style="margin-left:15px; margin-bottom:3%;">
                                         <span class="input-group-addon">$</span>
                                         @if(price){
-                                        <input id="currencyField" style="border: solid; border-color: red;" type="number" name="price" placeholder="Price" min="0.00" step="1.00" class="form-control currency"/>
+                                        <input id="currencyField" style="border: solid; border-color: red;" type="textbox" name="price" placeholder="Price" min="0.00" step="1.00" class="form-control curr"/>
                                         }else{ @if(newbook.price.toString() == "0"){
                                             <input id="currencyField" type="textbox" name="price" placeholder="Price" min="0.00" step="1.00" class="curr form-control"/>
                                         }else{
-                                            <input id="currencyField" type="number" name="price" value="@newbook.price" min="0.00" class="form-control curr"/>
+                                            <input id="currencyField" type="textbox" name="price" value="@newbook.price" min="0.00" class="form-control curr"/>
                                         }}
                                     </div>
                                     <div class="col-xs-6 col-xs-push-3">

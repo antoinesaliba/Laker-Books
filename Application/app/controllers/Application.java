@@ -383,7 +383,8 @@ public class Application extends Controller {
                     return ok(views.html.sell.render(bookresults.get(0), false, false, false));
                 } else if (auth != null && !auth.equals("")) {
                     int i = auth.indexOf(' ');
-                    auth = auth.substring(0,i);
+                    if(i!=-1)
+                        auth = auth.substring(0,i);
                     for (int b = 0; b < bookresults.size(); b++) {
                         if (bookresults.get(b).authors.toLowerCase().contains(auth.toLowerCase())) {
                             bookObject temp = bookresults.get(b);
